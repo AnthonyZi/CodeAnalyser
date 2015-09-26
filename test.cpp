@@ -25,6 +25,7 @@ int main(int argc, char* argv[])
 
         png_bytep pixeldata;
         int* significance_mat;
+        float* lab_mat;
         //end
 
         //read png
@@ -44,7 +45,33 @@ int main(int argc, char* argv[])
         if(pixeldata == NULL)
                 return 5;
 
-        significance_mat = get_significance_matrix(pixeldata, width, height, 0xFF, 0xFF, 0xFF);
+        for(png_uint_32 i = 0; i<height; i++)
+        {
+                for(png_uint_32 j = 0; j<width*3; j++)
+                {
+                        int tmp = *(pixeldata+i*width*3+j);
+                        std::cout << tmp << " ";
+                }
+                std::cout << std::endl;
+        }
+
+        float labref[3];
+        rgb_to_lab(labref, 0xff, 0xff, 0xff);
+        std::cout << "searching for: 0xff, 0xff, 0xff --> " << labref[0] << " " << labref[1] << " " << labref[2] << std::endl;
+
+        lab_mat = matrix_rgb_to_lab(pixeldata, width, height);
+
+        for(png_uint_32 i = 0; i<height; i++)
+        {
+                for(png_uint_32 j = 0; j<width*3; j++)
+                {
+                        float tmp = *(significance_mat+i*width*3+j);
+                        std::cout << tmp << " ";
+                }
+                std::cout << std::endl;
+        }
+
+        significance_mat = get_significance_matrix(lab_mat, width, height, labref[0], labref[1], labref[2]);
 
         for(png_uint_32 i = 0; i<height; i++)
         {
