@@ -1,0 +1,135 @@
+#include "readpng.h"
+
+void print_png_version_info()
+{
+        std::cout << "Compiled with libpng " << PNG_LIBPNG_VER_STRING << " using " << png_libpng_ver << std::endl;
+        std::cout << "Compiled with zlib " << ZLIB_VERSION << " using " << zlib_version << std::endl;
+}
+
+int check_png_version()
+{
+        std::string libver = PNG_LIBPNG_VER_STRING;
+        std::string zlibver = ZLIB_VERSION;
+        if(libver.compare(png_libpng_ver) != 0 || zlibver.compare(zlib_version) != 0)
+        {
+                std::cerr << "please update your librabries" << std::endl;
+                print_png_version_info();
+                return VERSIONERR;
+        }
+        return 0;
+}
+
+int readpng_init(FILE* fp, png_structp* png_ptr, png_infop* info_ptr)
+{
+        png_bytep sigp = (png_bytep)malloc(sizeof(png_byte)*8);
+if(fread(sigp, 1, 8, fp) != 8) { std::cerr << "couldn't read fileheader" << std::endl;
+                return 1;
+        }
+        if(png_sig_cmp(sigp, 0, 8))
+        {
+                std::cerr << "file could not be identified as .png" << std::endl;
+                return 1;
+        }
+        *png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+        if(!*png_ptr)
+        {
+                std::cerr << "couldn't initialize data-structs" << std::endl;
+                return 1;
+        }
+
+        *info_ptr = png_create_info_struct(*png_ptr);
+        if(!*info_ptr)
+        {
+                png_destroy_read_struct(png_ptr, info_ptr, NULL);
+                std::cerr << "couldn't initialize data-structs" << std::endl;
+                return 1;
+        }
+
+        if(setjmp(png_jmpbuf(*png_ptr)))
+        {
+                png_destroy_read_struct(png_ptr, info_ptr, NULL);
+                std::cerr << "error during setjmp" << std::endl;
+                return 1;
+        }
+
+        png_init_io(*png_ptr, fp);
+        png_set_sig_bytes(*png_ptr, 8);
+        png_read_info(*png_ptr, *info_ptr);
+
+        return 0;
+}
+
+png_bytep readpng_get_image(png_structp* png_ptr, png_infop* info_ptr, png_infop* end_ptr)
+{
+        //test for
+        if(setjmp(png_jmpbuf(*png_ptr)))
+        {
+                png_destroy_read_struct(png_ptr, info_ptr, NULL);
+                std::cerr << "error during setjmp" << std::endl;
+                return NULL;
+        }
+
+        std::cout << "penis" << std::endl;
+        png_uint_32 width, height;
+        int bit_depth, color_type;
+        png_uint_32 numrowbytes;
+        png_bytep dataBlock;
+
+        std::cout << "penis2" << std::endl;
+        // gamma correction start (optional)
+        double display_exponent = 2.2; //standard in most systems + standard in imageprocessing
+        int envGamma = 0;
+        if(envGamma)
+                display_exponent = (double)envGamma;
+
+
+        std::cout << "penis4" << std::endl;
+        double gamma;
+
+        if(png_get_gAMA(*png_ptr, *info_ptr, &gamma))
+                png_set_gamma(*png_ptr, display_exponent, gamma);
+
+        // gamma correction end
+       
+       
+        png_get_IHDR(*png_ptr, *info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL);
+
+
+        std::cout << "penis3" << std::endl;
+        //transform the png to a standard format
+        if(color_type == PNG_COLOR_TYPE_PALETTE)
+                png_set_expand(*png_ptr);
+        if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+                png_set_expand(*png_ptr);
+        if(png_get_valid(*png_ptr, *info_ptr, PNG_INFO_tRNS))
+                png_set_expand(*png_ptr);
+        if(bit_depth == 16)
+                png_set_strip_16(*png_ptr);
+        if(color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+                png_set_gray_to_rgb(*png_ptr);
+
+        std::cout << "penis5" << std::endl;
+        png_read_update_info(*png_ptr, *info_ptr);
+        //end
+
+        //proccessing for the dataBlock (pixeldata)
+        numrowbytes = png_get_rowbytes(*png_ptr, *info_ptr);
+        png_bytep row_pointers[height];
+
+        std::cout << "penis6" << std::endl;
+        dataBlock = (png_bytep)malloc(sizeof(png_bytep)*numrowbytes*height);
+        for(png_uint_32 i = 0; i<height; i++)
+                row_pointers[i] = dataBlock + i*numrowbytes;
+
+        std::cout << "penis7" << std::endl;
+
+        png_read_image(*png_ptr, row_pointers);
+        //end
+
+        std::cout << "penis8" << std::endl;
+        //optional reading of end in end_ptr and test for consistence
+        png_read_end(*png_ptr, NULL);
+        std::cout << "penis9" << std::endl;
+        
+        return dataBlock;
+}
