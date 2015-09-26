@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
         png_infop info_ptr = NULL;
         png_uint_32 height;
         png_uint_32 width;
-        png_uint_32 numrowbytes;
+//        png_uint_32 numrowbytes;
 
         png_bytep pixeldata;
         int* significance_mat;
@@ -30,13 +30,12 @@ int main(int argc, char* argv[])
         //read png
         if(readpng_init(fp, &png_ptr, &info_ptr))
                 return 4;
-        std::cout << "Initialisation successfull" << std::endl;
 
         pixeldata = readpng_get_image(&png_ptr, &info_ptr, NULL);
 
         height = png_get_image_height(png_ptr, info_ptr);
         width = png_get_image_width(png_ptr, info_ptr);
-        numrowbytes = png_get_rowbytes(png_ptr, info_ptr);
+//        numrowbytes = png_get_rowbytes(png_ptr, info_ptr);
 
         fclose(fp);
         png_destroy_read_struct(&png_ptr, &info_ptr, NULL);

@@ -69,13 +69,11 @@ png_bytep readpng_get_image(png_structp* png_ptr, png_infop* info_ptr, png_infop
                 return NULL;
         }
 
-        std::cout << "penis" << std::endl;
         png_uint_32 width, height;
         int bit_depth, color_type;
         png_uint_32 numrowbytes;
         png_bytep dataBlock;
 
-        std::cout << "penis2" << std::endl;
         // gamma correction start (optional)
         double display_exponent = 2.2; //standard in most systems + standard in imageprocessing
         int envGamma = 0;
@@ -83,7 +81,6 @@ png_bytep readpng_get_image(png_structp* png_ptr, png_infop* info_ptr, png_infop
                 display_exponent = (double)envGamma;
 
 
-        std::cout << "penis4" << std::endl;
         double gamma;
 
         if(png_get_gAMA(*png_ptr, *info_ptr, &gamma))
@@ -95,7 +92,6 @@ png_bytep readpng_get_image(png_structp* png_ptr, png_infop* info_ptr, png_infop
         png_get_IHDR(*png_ptr, *info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL);
 
 
-        std::cout << "penis3" << std::endl;
         //transform the png to a standard format
         if(color_type == PNG_COLOR_TYPE_PALETTE)
                 png_set_expand(*png_ptr);
@@ -108,7 +104,6 @@ png_bytep readpng_get_image(png_structp* png_ptr, png_infop* info_ptr, png_infop
         if(color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
                 png_set_gray_to_rgb(*png_ptr);
 
-        std::cout << "penis5" << std::endl;
         png_read_update_info(*png_ptr, *info_ptr);
         //end
 
@@ -116,20 +111,16 @@ png_bytep readpng_get_image(png_structp* png_ptr, png_infop* info_ptr, png_infop
         numrowbytes = png_get_rowbytes(*png_ptr, *info_ptr);
         png_bytep row_pointers[height];
 
-        std::cout << "penis6" << std::endl;
         dataBlock = (png_bytep)malloc(sizeof(png_bytep)*numrowbytes*height);
         for(png_uint_32 i = 0; i<height; i++)
                 row_pointers[i] = dataBlock + i*numrowbytes;
 
-        std::cout << "penis7" << std::endl;
 
         png_read_image(*png_ptr, row_pointers);
         //end
 
-        std::cout << "penis8" << std::endl;
         //optional reading of end in end_ptr and test for consistence
         png_read_end(*png_ptr, NULL);
-        std::cout << "penis9" << std::endl;
         
         return dataBlock;
 }
