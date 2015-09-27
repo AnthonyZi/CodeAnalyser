@@ -56,8 +56,11 @@ int main(int argc, char* argv[])
         }
 
         float labref[3];
-        rgb_to_lab(labref, 0xff, 0xff, 0xff);
-        std::cout << "searching for: 0xff, 0xff, 0xff --> " << labref[0] << " " << labref[1] << " " << labref[2] << std::endl;
+        int red = 0;
+        int green = 0xff;
+        int blue = 0;
+        rgb_to_lab(labref, red, green, blue);
+        std::cout << "searching for: " << red << " " << green << " " << blue << "  --> " << labref[0] << " " << labref[1] << " " << labref[2] << std::endl;
 
         lab_mat = matrix_rgb_to_lab(pixeldata, width, height);
 
@@ -84,8 +87,22 @@ int main(int argc, char* argv[])
                 std::cout << std::endl;
         }
 
+        for(png_uint_32 i = 0; i<height; i++)
+        {
+                for(png_uint_32 j = 0; j<width; j++)
+                {
+                        int tmp = *(significance_mat+i*width+j);
+                        tmp = tmp>500 ? 0 : 1;
+                        std::cout << tmp << " ";
+                }
+                std::cout << std::endl;
+        }
+
+
         //free pointers used in programm
         free(pixeldata);
+        free(lab_mat);
+        free(significance_mat);
 
         return 0;
 }
