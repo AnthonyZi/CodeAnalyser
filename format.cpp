@@ -50,17 +50,52 @@ float* matrix_rgb_to_lab(png_bytep pixeldata, uint32_t width, uint32_t height)
 
 void rgb_to_lab(float* lab, png_byte rdat, png_byte gdat, png_byte bdat)
 {
-
-        std::cout << (int)rdat << " " << (int)gdat << " " << (int)bdat << " -> ";
         float tempx, tempy, tempz;
+        float tempr, tempg, tempb;
 
-        tempx = (float)rdat*0.4124564 + (float)gdat*0.3575761 + (float)bdat*0.1804375;
-        tempy = (float)rdat*0.2126729 + (float)gdat*0.7151522 + (float)bdat*0.0721750;
-        tempz = (float)rdat*0.0193339 + (float)gdat*0.1191920 + (float)bdat*0.9503041;
+        tempr = (float)rdat / 255;
+        tempg = (float)gdat / 255;
+        tempb = (float)bdat / 255;
 
-        *(lab) = (116*pow(tempy/100, 1/3)) - 16;
-        *(lab+1) = 500*(pow(tempx/94.811, 1/3) - pow(tempy/100, 1/3));
-        *(lab+2) = 200*(pow(tempy/100, 1/3) - pow(tempz/107.304, 1/3));
+        if(tempr > 0.04045)
+                tempr = pow( (tempr+0.055)/1.055, 2.4);
+        else
+                tempr /= 12.92;
+        if(tempg > 0.04045)
+                tempg = pow( (tempg+0.055)/1.055, 2.4);
+        else
+                tempg /= 12.92;
+        if(tempb > 0.04045)
+                tempb = pow( (tempb+0.055)/1.055, 2.4);
+        else
+                tempb /= 12.92;
 
-        std::cout << *lab << " " << *(lab+1) << " " << *(lab+2) << std::endl;
+        tempr *= 100;
+        tempg *= 100;
+        tempb *= 100;
+        
+        tempx = tempr*0.4124 + tempg*0.3576 + tempb*0.1805;
+        tempy = tempr*0.2126 + tempg*0.7152 + tempb*0.0722;
+        tempz = tempr*0.0193 + tempg*0.1192 + tempb*0.9505;
+
+        tempx /= 95.047;
+        tempy /= 100;
+        tempz /= 108.883;
+
+        if(tempx > 0.008856)
+                tempx = pow(tempx, 1.0/3);
+        else
+                tempx = (7.787*tempx) + (16.0/116);
+        if(tempy > 0.008856)
+                tempy = pow(tempy, 1.0/3);
+        else
+                tempy = (7.787*tempy) + (16.0/116);
+        if(tempz > 0.008856)
+                tempz = pow(tempz, 1.0/3);
+        else
+                tempz = (7.787*tempz) + (16.0/116);
+
+        *(lab) = (116*tempy) - 16;
+        *(lab+1) = 500*(tempx - tempy);
+        *(lab+2) = 200*(tempy - tempz);
 }
