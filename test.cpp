@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
         }
 
         float labref[3];
-        rgb_to_lab(labref, 0xff, 0xff, 0xff);
+        rgb_to_lab(labref, 0, 0, 0);
         std::cout << "searching for: 0xff, 0xff, 0xff --> " << labref[0] << " " << labref[1] << " " << labref[2] << std::endl;
 
         lab_mat = matrix_rgb_to_lab(pixeldata, width, height);

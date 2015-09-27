@@ -36,26 +36,31 @@ float* matrix_rgb_to_lab(png_bytep pixeldata, uint32_t width, uint32_t height)
                 return NULL;
         }
         png_byte rdat, gdat, bdat;
-        for(unsigned long i = 0; i < width*height; i+=3)
+        for(unsigned long i = 0; i < width*height; i++)
         {
                 rdat = *(pixeldata +i*3);
                 gdat = *(pixeldata +i*3 +1);
                 bdat = *(pixeldata +i*3 +2);
-                rgb_to_lab(lab_mat+i, rdat, gdat, bdat);
+                
+                float* lab = lab_mat +i*3;
+                rgb_to_lab(lab, rdat, gdat, bdat);
         }
         return lab_mat;
 }
 
-void rgb_to_lab(float lab[3], png_byte rdat, png_byte gdat, png_byte bdat)
+void rgb_to_lab(float* lab, png_byte rdat, png_byte gdat, png_byte bdat)
 {
 
+        std::cout << (int)rdat << " " << (int)gdat << " " << (int)bdat << " -> ";
         float tempx, tempy, tempz;
 
         tempx = (float)rdat*0.4124564 + (float)gdat*0.3575761 + (float)bdat*0.1804375;
         tempy = (float)rdat*0.2126729 + (float)gdat*0.7151522 + (float)bdat*0.0721750;
-        tempy = (float)rdat*0.0193339 + (float)gdat*0.1191920 + (float)bdat*0.9503041;
+        tempz = (float)rdat*0.0193339 + (float)gdat*0.1191920 + (float)bdat*0.9503041;
 
-        lab[0] = 116*pow(tempy/100, 1/3) - 16;
-        lab[1] = 500*(pow(tempx/94.811, 1/3) - pow(tempy/100, 1/3));
-        lab[2] = 200*(pow(tempy/100, 1/3) - pow(tempz/107.304, 1/3));
+        *(lab) = (116*pow(tempy/100, 1/3)) - 16;
+        *(lab+1) = 500*(pow(tempx/94.811, 1/3) - pow(tempy/100, 1/3));
+        *(lab+2) = 200*(pow(tempy/100, 1/3) - pow(tempz/107.304, 1/3));
+
+        std::cout << *lab << " " << *(lab+1) << " " << *(lab+2) << std::endl;
 }
