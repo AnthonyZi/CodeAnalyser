@@ -124,3 +124,102 @@ png_bytep readpng_get_image(png_structp* png_ptr, png_infop* info_ptr, png_infop
         
         return dataBlock;
 }
+
+
+png_bytep readpng_get_image_noalpha(png_structp* png_ptr, png_infop* info_ptr, png_infop* end_ptr)
+{
+        //test for
+        if(setjmp(png_jmpbuf(*png_ptr)))
+        {
+                png_destroy_read_struct(png_ptr, info_ptr, NULL);
+                std::cerr << "error during setjmp" << std::endl;
+                return NULL;
+        }
+
+        png_uint_32 width, height;
+        int bit_depth, color_type;
+        png_uint_32 numrowbytes;
+        png_bytep dataBlock;
+
+        // gamma correction start (optional)
+        double display_exponent = 2.2; //standard in most systems + standard in imageprocessing
+        int envGamma = 0;
+        if(envGamma)
+                display_exponent = (double)envGamma;
+
+
+        double gamma;
+
+        if(png_get_gAMA(*png_ptr, *info_ptr, &gamma))
+                png_set_gamma(*png_ptr, display_exponent, gamma);
+
+        // gamma correction end
+       
+       
+        png_get_IHDR(*png_ptr, *info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL);
+
+
+        //transform the png to a standard format
+        if(color_type == PNG_COLOR_TYPE_PALETTE)
+                png_set_expand(*png_ptr);
+        if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+                png_set_expand(*png_ptr);
+        if(png_get_valid(*png_ptr, *info_ptr, PNG_INFO_tRNS))
+                png_set_expand(*png_ptr);
+        if(bit_depth == 16)
+                png_set_strip_16(*png_ptr);
+        if(color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+                png_set_gray_to_rgb(*png_ptr);
+
+        png_read_update_info(*png_ptr, *info_ptr);
+        //end
+
+        //proccessing for the dataBlock (pixeldata)
+        numrowbytes = png_get_rowbytes(*png_ptr, *info_ptr);
+        png_bytep row_pointers[height];
+
+        dataBlock = (png_bytep)malloc(sizeof(png_bytep)*numrowbytes*height);
+        for(png_uint_32 i = 0; i<height; i++)
+                row_pointers[i] = dataBlock + i*numrowbytes;
+
+
+        png_read_image(*png_ptr, row_pointers);
+
+        if(color_type == PNG_COLOR_TYPE_RGB_ALPHA)
+        {
+                std::cout << "removing alpha" << std::endl;
+                png_bytep dataBlock_tmp = (png_bytep)malloc(sizeof(png_bytep)*width*height*3);
+                dataBlock_tmp = delete_alpha(png_ptr, info_ptr, dataBlock);
+                free(dataBlock);
+                dataBlock = dataBlock_tmp;
+        }
+        //end
+
+        //optional reading of end in end_ptr and test for consistence
+        png_read_end(*png_ptr, NULL);
+        
+        return dataBlock;
+}
+
+png_bytep delete_alpha(png_structp* png_ptr, png_infop* info_ptr, png_bytep pixeldata)
+{
+        png_bytep dataBlock;
+        png_uint_32 height, width;
+
+        height = png_get_image_height(*png_ptr, *info_ptr);
+        width = png_get_image_width(*png_ptr, *info_ptr);
+
+        dataBlock = (png_bytep)malloc(sizeof(png_bytep)*width*height*3);
+
+        for(png_uint_32 i = 0; i<height; i++)
+        {
+                for(png_uint_32 j = 0; j<width; j++)
+                {
+                        *(dataBlock + i*width*3 + j*3) = *(pixeldata + i*width*4 + j*4);
+                        *(dataBlock + i*width*3 + j*3 + 1) = *(pixeldata + i*width*4 + j*4 + 1);
+                        *(dataBlock + i*width*3 + j*3 + 2) = *(pixeldata + i*width*4 + j*4 + 2);
+                }
+        }
+
+        return dataBlock;
+}

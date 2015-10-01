@@ -29,10 +29,11 @@ int main(int argc, char* argv[])
         //end
 
         //read png
+        std::cout << "read png" << std::endl;
         if(readpng_init(fp, &png_ptr, &info_ptr))
                 return 4;
 
-        pixeldata = readpng_get_image(&png_ptr, &info_ptr, NULL);
+        pixeldata = readpng_get_image_noalpha(&png_ptr, &info_ptr, NULL);
 
         height = png_get_image_height(png_ptr, info_ptr);
         width = png_get_image_width(png_ptr, info_ptr);
@@ -45,25 +46,29 @@ int main(int argc, char* argv[])
         if(pixeldata == NULL)
                 return 5;
 
+        /*        
         for(png_uint_32 i = 0; i<height; i++)
         {
                 for(png_uint_32 j = 0; j<width*3; j++)
                 {
                         int tmp = *(pixeldata+i*width*3+j);
-                        std::cout << tmp << " ";
+                        std::cout << std::hex  << tmp << " ";
                 }
-                std::cout << std::endl;
+                std::cout << std::dec << std::endl;
         }
+        */
 
         float labref[3];
-        int red = 0;
+        int red = 0xff;
         int green = 0xff;
-        int blue = 0;
+        int blue = 0xff;
         rgb_to_lab(labref, red, green, blue);
-        std::cout << "searching for: " << red << " " << green << " " << blue << "  --> " << labref[0] << " " << labref[1] << " " << labref[2] << std::endl;
+        std::cout << "searching for: " << red << " " << green << " " << blue << std::endl;
 
+        std::cout << "converting rgb to Lab" << std::endl;
         lab_mat = matrix_rgb_to_lab(pixeldata, width, height);
 
+        /*
         for(png_uint_32 i = 0; i<height; i++)
         {
                 for(png_uint_32 j = 0; j<width*3; j++)
@@ -73,10 +78,12 @@ int main(int argc, char* argv[])
                 }
                 std::cout << std::endl;
         }
+        */
 
-        std::cout << "significance" << std::endl;
+        std::cout << "building up significance-matrix" << std::endl;
         significance_mat = get_significance_matrix(lab_mat, width, height, labref[0], labref[1], labref[2]);
 
+        /*
         for(png_uint_32 i = 0; i<height; i++)
         {
                 for(png_uint_32 j = 0; j<width; j++)
@@ -86,13 +93,15 @@ int main(int argc, char* argv[])
                 }
                 std::cout << std::endl;
         }
+        */
 
+        std::cout << "checking significance for values under 200" << std::endl;
         for(png_uint_32 i = 0; i<height; i++)
         {
                 for(png_uint_32 j = 0; j<width; j++)
                 {
                         int tmp = *(significance_mat+i*width+j);
-                        tmp = tmp>500 ? 0 : 1;
+                        tmp = tmp>200 ? 0 : 1;
                         std::cout << tmp << " ";
                 }
                 std::cout << std::endl;

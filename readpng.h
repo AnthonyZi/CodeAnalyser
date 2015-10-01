@@ -21,5 +21,7 @@ int check_png_version();
 int readpng_init(FILE*, png_structp*, png_infop*); 
 // get the image in a png_byte[height][numrowbytes] + end_ptr(last param)
 png_bytep readpng_get_image(png_structp*, png_infop*, png_infop*);
+png_bytep readpng_get_image_noalpha(png_structp*, png_infop*, png_infop*);
+png_bytep delete_alpha(png_structp*, png_infop*, png_bytep);
 
 #endif

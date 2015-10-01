@@ -4,6 +4,13 @@
 #include <stdlib.h>
 #include <cmath>
 
+/* result means:
+ * 0 - perfect matching
+ * 10 - recognizable of a professional
+ * 25 - recognizable of a normal person
+ * 60-70 - tolerable difference in media
+ * >100 - clearly recognizable difference
+ */
 //datamatrix, width, height, lref, aref, bref
 int* get_significance_matrix(float*, uint32_t, uint32_t, float, float, float);
 
