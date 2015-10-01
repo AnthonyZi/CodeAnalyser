@@ -126,7 +126,7 @@ png_bytep readpng_get_image(png_structp* png_ptr, png_infop* info_ptr, png_infop
 }
 
 
-png_bytep readpng_get_image_noalpha(png_structp* png_ptr, png_infop* info_ptr, png_infop* end_ptr)
+png_bytep readpng_get_image_white_alpha(png_structp* png_ptr, png_infop* info_ptr, png_infop* end_ptr)
 {
         //test for
         if(setjmp(png_jmpbuf(*png_ptr)))
@@ -189,7 +189,7 @@ png_bytep readpng_get_image_noalpha(png_structp* png_ptr, png_infop* info_ptr, p
         {
                 std::cout << "removing alpha" << std::endl;
                 png_bytep dataBlock_tmp = (png_bytep)malloc(sizeof(png_bytep)*width*height*3);
-                dataBlock_tmp = delete_alpha(png_ptr, info_ptr, dataBlock);
+                dataBlock_tmp = delete_alpha_white(png_ptr, info_ptr, dataBlock);
                 free(dataBlock);
                 dataBlock = dataBlock_tmp;
         }
@@ -218,6 +218,30 @@ png_bytep delete_alpha(png_structp* png_ptr, png_infop* info_ptr, png_bytep pixe
                         *(dataBlock + i*width*3 + j*3) = *(pixeldata + i*width*4 + j*4);
                         *(dataBlock + i*width*3 + j*3 + 1) = *(pixeldata + i*width*4 + j*4 + 1);
                         *(dataBlock + i*width*3 + j*3 + 2) = *(pixeldata + i*width*4 + j*4 + 2);
+                }
+        }
+
+        return dataBlock;
+}
+
+png_bytep delete_alpha_white(png_structp* png_ptr, png_infop* info_ptr, png_bytep pixeldata)
+{
+        png_bytep dataBlock;
+        png_uint_32 height, width;
+
+        height = png_get_image_height(*png_ptr, *info_ptr);
+        width = png_get_image_width(*png_ptr, *info_ptr);
+
+        dataBlock = (png_bytep)malloc(sizeof(png_bytep)*width*height*3);
+
+        for(png_uint_32 i = 0; i<height; i++)
+        {
+                for(png_uint_32 j = 0; j<width; j++)
+                {
+                        *(dataBlock + i*width*3 + j*3) = 0xff - (0xff - *(pixeldata + i*width*4 + j*4))*(*(pixeldata + i*width*4 + j*4 + 3))/0xff;
+                        *(dataBlock + i*width*3 + j*3 + 1) = 0xff - (0xff - *(pixeldata + i*width*4 + j*4 + 1))*(*(pixeldata + i*width*4 + j*4 + 3))/0xff;
+                        *(dataBlock + i*width*3 + j*3 + 2) = 0xff - (0xff - *(pixeldata + i*width*4 + j*4 + 2))*(*(pixeldata + i*width*4 + j*4 + 3))/0xff;
+
                 }
         }
 
