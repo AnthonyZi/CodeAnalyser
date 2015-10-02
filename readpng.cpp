@@ -22,7 +22,9 @@ int check_png_version()
 int readpng_init(FILE* fp, png_structp* png_ptr, png_infop* info_ptr)
 {
         png_bytep sigp = (png_bytep)malloc(sizeof(png_byte)*8);
-if(fread(sigp, 1, 8, fp) != 8) { std::cerr << "couldn't read fileheader" << std::endl;
+        if(fread(sigp, 1, 8, fp) != 8)
+        {
+                std::cerr << "couldn't read fileheader" << std::endl;
                 return 1;
         }
         if(png_sig_cmp(sigp, 0, 8))
@@ -140,6 +142,7 @@ png_bytep readpng_get_image_white_alpha(png_structp* png_ptr, png_infop* info_pt
         int bit_depth, color_type;
         png_uint_32 numrowbytes;
         png_bytep dataBlock;
+        bool alphachannel = false;
 
         // gamma correction start (optional)
         double display_exponent = 2.2; //standard in most systems + standard in imageprocessing
@@ -161,11 +164,20 @@ png_bytep readpng_get_image_white_alpha(png_structp* png_ptr, png_infop* info_pt
 
         //transform the png to a standard format
         if(color_type == PNG_COLOR_TYPE_PALETTE)
+        {
                 png_set_expand(*png_ptr);
+                alphachannel = true;
+        }
         if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+        {
                 png_set_expand(*png_ptr);
+                alphachannel = true;
+        }
         if(png_get_valid(*png_ptr, *info_ptr, PNG_INFO_tRNS))
+        {
                 png_set_expand(*png_ptr);
+                alphachannel = true;
+        }
         if(bit_depth == 16)
                 png_set_strip_16(*png_ptr);
         if(color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
@@ -185,7 +197,7 @@ png_bytep readpng_get_image_white_alpha(png_structp* png_ptr, png_infop* info_pt
 
         png_read_image(*png_ptr, row_pointers);
 
-        if(color_type == PNG_COLOR_TYPE_RGB_ALPHA)
+        if(color_type & PNG_COLOR_MASK_ALPHA || alphachannel)
         {
                 std::cout << "removing alpha" << std::endl;
                 png_bytep dataBlock_tmp = (png_bytep)malloc(sizeof(png_bytep)*width*height*3);

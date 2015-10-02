@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 
         if(pixeldata == NULL)
                 return 5;
-        
+
         /*
         for(png_uint_32 i = 0; i<height; i++)
         {
@@ -59,14 +59,14 @@ int main(int argc, char* argv[])
         */
 
         float labref[3];
-        int red = 0x32;
-        int green = 0x39;
-        int blue = 0x43;
+        int red = 0;
+        int green = 0x71;
+        int blue = 0xb9;
         rgb_to_lab(labref, red, green, blue);
-        std::cout << "searching for: " << red << " " << green << " " << blue << std::endl;
+        std::cout << "searching for: " << red << " " << green << " " << blue;
 
-        std::cout << "converting rgb to Lab" << std::endl;
         lab_mat = matrix_rgb_to_lab(pixeldata, width, height);
+        std::cout << " -> " << labref[0] << " " << labref[1] << " " << labref[2] << std::endl;
 
         /*
         for(png_uint_32 i = 0; i<height; i++)
@@ -95,13 +95,13 @@ int main(int argc, char* argv[])
         }
         */
 
-        std::cout << "checking significance for values under 160" << std::endl;
+        std::cout << "checking significance for values under 300" << std::endl;
         for(png_uint_32 i = 0; i<height; i++)
         {
                 for(png_uint_32 j = 0; j<width; j++)
                 {
                         int tmp = *(significance_mat+i*width+j);
-                        tmp = tmp>160 ? 0 : 1;
+                        tmp = tmp>300 ? 0 : 1;
                         std::cout << tmp << " ";
                 }
                 std::cout << std::endl;
