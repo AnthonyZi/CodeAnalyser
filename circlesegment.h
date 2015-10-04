@@ -15,7 +15,7 @@ public:
         static int* getCircleMatrix(int diameter);
 
 private:
-        void invertCircleshape(int* matrix, int matrixwidth, int diameter);
-}
+        static void invertCircleshape(int* matrix, int matrixwidth, int diameter);
+};
 
 #endif

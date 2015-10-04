@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "readpng.h"
 #include "format.h"
+#include "circlesegment.h"
 
 int main(int argc, char* argv[])
 {
@@ -112,6 +113,20 @@ int main(int argc, char* argv[])
         free(pixeldata);
         free(lab_mat);
         free(significance_mat);
+
+        int* circlemat;
+
+        int dia = 10;
+        circlemat = CircleSegment::getCircleMatrix(dia);
+
+        for(int i = 0; i< dia; i++)
+        {
+                for(int j = 0; j<dia; j++)
+                {
+                        std::cout << *(circlemat + i*dia + j) << " ";
+                }
+                std::cout << std::endl;
+        }
 
         return 0;
 }
