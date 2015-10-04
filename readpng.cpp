@@ -142,7 +142,7 @@ png_bytep readpng_get_image_white_alpha(png_structp* png_ptr, png_infop* info_pt
         int bit_depth, color_type;
         png_uint_32 numrowbytes;
         png_bytep dataBlock;
-        bool alphachannel = false;
+        bool expanded_alpha_channel = false;
 
         // gamma correction start (optional)
         double display_exponent = 2.2; //standard in most systems + standard in imageprocessing
@@ -166,17 +166,17 @@ png_bytep readpng_get_image_white_alpha(png_structp* png_ptr, png_infop* info_pt
         if(color_type == PNG_COLOR_TYPE_PALETTE)
         {
                 png_set_expand(*png_ptr);
-                alphachannel = true;
+                expanded_alpha_channel = true;
         }
         if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
         {
                 png_set_expand(*png_ptr);
-                alphachannel = true;
+                expanded_alpha_channel = true;
         }
         if(png_get_valid(*png_ptr, *info_ptr, PNG_INFO_tRNS))
         {
                 png_set_expand(*png_ptr);
-                alphachannel = true;
+                expanded_alpha_channel = true;
         }
         if(bit_depth == 16)
                 png_set_strip_16(*png_ptr);
@@ -197,7 +197,7 @@ png_bytep readpng_get_image_white_alpha(png_structp* png_ptr, png_infop* info_pt
 
         png_read_image(*png_ptr, row_pointers);
 
-        if(color_type & PNG_COLOR_MASK_ALPHA || alphachannel)
+        if(color_type & PNG_COLOR_MASK_ALPHA || expanded_alpha_channel)
         {
                 std::cout << "removing alpha" << std::endl;
                 png_bytep dataBlock_tmp = (png_bytep)malloc(sizeof(png_bytep)*width*height*3);

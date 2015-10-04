@@ -1,4 +1,3 @@
-#include <math.h>
 #include "format.h"
 
 int* get_significance_matrix(float* pixeldata, uint32_t width, uint32_t height, float lref, float aref, float bref)
