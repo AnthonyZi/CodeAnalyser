@@ -2,6 +2,7 @@
 #define CircleSegment_H
 
 #include <cmath>
+#include <stdlib.h>
 
 class CircleSegment
 {

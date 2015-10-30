@@ -10,7 +10,7 @@ LDFLAGS = -L/usr/lib/arm-linux-gnueabihf/ -lpng -lz
 NAME = png
 
 CSOURCE =
-CPPSOURCE = test.cpp readpng.cpp format.cpp
+CPPSOURCE = test.cpp readpng.cpp format.cpp circlesegment.cpp
 #################
 
 OBJS += $(patsubst %.cpp, %.o, $(filter %.cpp, $(CPPSOURCE)))

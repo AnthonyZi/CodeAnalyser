@@ -3,9 +3,9 @@
 int* CircleSegment::getCircleMatrix(int diameter)
 {
         int* circlemat;
-        circlemat = (int*)malloc(sizeof((int)*diameter*diameter));
+        circlemat = (int*)malloc(sizeof(int)*diameter*diameter);
 
-        invertCircleshape(circlemat, int diameter, int diameter);
+        invertCircleshape(circlemat, diameter, diameter);
 
         return circlemat;
 }
@@ -23,9 +23,9 @@ void CircleSegment::invertCircleshape(int* matrix, int matrixwidth, int diameter
                         tmpVal = sqrt((i*i) + (j*j)) <= diameter ? 1 : 0;
 
                         *(matrix + (mathalfleftborder-j)*matrixwidth + (mathalfleftborder - i)) = tmpVal;
-                        *(matrix + (mathhafleftborder-j)*matrixwidth + (mathalfrightborder + i)) = tmpVal;
-                        *(matrix + (mathhalfrightborder+j*matrixwidth + (mathhalfleftborder - i)) = tempVal;
-                        *(matrix + (mathhalfrightborder+j*matrixwidth + (mathhalfrightborder + i)) = tempVal;
+                        *(matrix + (mathalfleftborder-j)*matrixwidth + (mathalfrightborder + i)) = tmpVal;
+                        *(matrix + (mathalfrightborder+j)*matrixwidth + (mathalfleftborder - i)) = tmpVal;
+                        *(matrix + (mathalfrightborder+j)*matrixwidth + (mathalfrightborder + i)) = tmpVal;
                 }
         }
 }
