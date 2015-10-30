@@ -116,14 +116,17 @@ int main(int argc, char* argv[])
 
         int* circlemat;
 
-        int dia = 10;
+        int dia = 61;
         circlemat = CircleSegment::getCircleMatrix(dia);
+
+        std::cout << "test for circlematrix" << std::endl;
 
         for(int i = 0; i< dia; i++)
         {
                 for(int j = 0; j<dia; j++)
                 {
-                        std::cout << *(circlemat + i*dia + j) << " ";
+                        int tmp = *(circlemat + i*dia + j);
+                        std::cout << tmp << " ";
                 }
                 std::cout << std::endl;
         }

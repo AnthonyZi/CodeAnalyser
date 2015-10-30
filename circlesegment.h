@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <stdlib.h>
+#include <iostream> //penis
 
 class CircleSegment
 {
