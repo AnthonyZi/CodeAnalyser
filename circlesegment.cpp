@@ -78,3 +78,9 @@ void CircleSegment::invertCircleshape(int* matrix, int matrixwidth, int diameter
                 *(matrix + (middle*matrixwidth) + middle) = 1;
         }
 }
+
+void CircleSegment::setData(int* data, int dia)
+{
+        segmentData = data;
+        diameter = dia;
+}

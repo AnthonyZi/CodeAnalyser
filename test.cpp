@@ -23,11 +23,21 @@ int main(int argc, char* argv[])
         png_uint_32 height;
         png_uint_32 width;
 //        png_uint_32 numrowbytes;
-
+        
+        //pointer for matrices (picturedata in different formats)
         png_bytep pixeldata;
         int* significance_mat;
         float* lab_mat;
-        //end
+        bool* matrixmask;
+
+        //reference variables (conversion from rgb to lab for better comparison)
+        float labref[3];
+        //values to be searched for!
+        int red = 0;
+        int green = 0x71;
+        int blue = 0xb9;
+        int labthreshold = 300; //"*10" compared to the standard compared values for lab
+
 
         //read png
         std::cout << "read png" << std::endl;
@@ -59,15 +69,16 @@ int main(int argc, char* argv[])
         }
         */
 
-        float labref[3];
-        int red = 0;
-        int green = 0x71;
-        int blue = 0xb9;
-        rgb_to_lab(labref, red, green, blue);
-        std::cout << "searching for: " << red << " " << green << " " << blue;
-
+        //CONVERT rgb-matrix to lab-matrix
         lab_mat = matrix_rgb_to_lab(pixeldata, width, height);
-        std::cout << " -> " << labref[0] << " " << labref[1] << " " << labref[2] << std::endl;
+        //directly delete unused references
+        free(pixeldata);
+        //END CONVERT
+
+        //prepare search in lab
+        rgb_to_lab(labref, red, green, blue);
+        std::cout << "searching for: " << red << " " << green << " " << blue << "(rgb)";
+        std::cout << " -> " << labref[0] << " " << labref[1] << " " << labref[2] << "(lab)" << std::endl;
 
         /*
         for(png_uint_32 i = 0; i<height; i++)
@@ -81,8 +92,12 @@ int main(int argc, char* argv[])
         }
         */
 
+        //BUILD SIGNIFICANCEMATRIX
         std::cout << "building up significance-matrix" << std::endl;
         significance_mat = get_significance_matrix(lab_mat, width, height, labref[0], labref[1], labref[2]);
+        //directly erase reference to lab_mat
+        free(lab_mat);
+        //END BUILD SIGNIFICANCEMATRIX
 
         /*
         for(png_uint_32 i = 0; i<height; i++)
@@ -96,27 +111,28 @@ int main(int argc, char* argv[])
         }
         */
 
-        std::cout << "checking significance for values under 300" << std::endl;
+        //BUILD MATRIXMASK
+        std::cout << "checking significance for values under threshold-value: "<< labthreshold << std::endl;
+
+        matrixmask = (bool*)malloc(sizeof(bool)*width*height);
         for(png_uint_32 i = 0; i<height; i++)
         {
                 for(png_uint_32 j = 0; j<width; j++)
                 {
                         int tmp = *(significance_mat+i*width+j);
-                        tmp = tmp>300 ? 0 : 1;
-                        std::cout << tmp << " ";
+                        *(matrixmask+i*width+j) = tmp>labthreshold ? false : true;
+                        std::cout << *(matrixmask+i*width+j) << " ";
                 }
                 std::cout << std::endl;
         }
 
 
         //free pointers used in programm
-        free(pixeldata);
-        free(lab_mat);
         free(significance_mat);
 
         int* circlemat;
 
-        int dia = 61;
+        int dia = 60;
         circlemat = CircleSegment::getCircleMatrix(dia);
 
         std::cout << "test for circlematrix" << std::endl;
