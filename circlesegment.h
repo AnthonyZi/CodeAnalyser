@@ -11,8 +11,7 @@ class CircleSegment
 private:
         int* segmentData;
         int* ringMatrix;
-        int* dotArea;
-        int diameter
+        int diameter;
 
 public:
         static int* getCircleMatrix(int diameter);

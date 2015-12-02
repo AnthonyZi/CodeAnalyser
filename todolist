@@ -1,0 +1,59 @@
+search:
+# smalldiameter bestimmen(smalldiameter entspricht im endeffekt der größe eines 'Musterpixels')
+# lege vector<circlesegment> an um gefunde Kreise abspeichern zu können
+# median-filter um buchstgaben zu löschen
+# analyse fuer die filterung:
+# buchstabenbreite I: 4/1655 ; 2/550 ; 2/500 ; 1/612
+# median-filter reverse um gefundene stellen wieder in die richtige groesse zu bringen
+# suche felder, in welchen kreise gefunden werden koennten. definiere diese und fuehre dann die suche nur auf diesen feldern aus
+* mistake correction in matrixproccessing.cpp > quickdownscale! ..rgw-werte einzeln betrachten!
+* suche kreise
+**    wende einen medianfilter (groeße abhängig vom smalldiameter) auf das bild an um treffgenauigkeit zu erhoehen
+**    iteriere durch das gesamte bild durch und suche nach circlesegments
+**    falls circlesegments mit dem richtigen 0-1-Verhältnis gefunden werden speichere diese in form von circlesegments in einer liste ab
+* iteriere durch alle gefundenen Kreise durch und lasse alle Objekte den Mustererkennungsalgorithmus starten
+**    wird ein Muster gefunden so gibt der string einen gültigen integer als Code zurück
+**    -> Vorübergehende Vorgehensweise:
+**    -> speichere erhaltenen Code in einem vector<int> ab und iteriere weiter
+
+circlesegment:
+* suche in der ringmatrix nach pixeltreffern
+* - bei übereinstimmung, speicher diese koordinate ab
+* Führe folgende schritte der Reihe nach durch solange das Muster noch ein mögliches Suchmuster ist!
+**    führe die Eckübereinstimmungsüberprüfung durch für gegenüberliegende Ecke
+**    führe die Eckübereinstimmungsüberprüfung für die zwei Nebenecken durch
+**    suche nach den restlichen weiteren Überprüfungsbits
+**    suche nach dem Ausrichtungsbit und teste das gegenüberliegende "negativ-Ausrichtungsbit"
+**    wenn alle Tests erfolgreich waren, lese das Muster aus und gebe es als codierten integer zurück
+
+
+1000111  //  4x1 +  3x0
+0110111  //  5x1 +  2x0
+0xxxxx1  //  1x1 +  1x0
+0xxxxx0  //  0x1 +  2x0
+1xxxxx0  //  1x1 +  1x0
+1001000  //  2x1 +  5x0
+1110001  //  4x1 +  3x0
+
+         // ----------- 
+7x7=49   // 17x1 + 17x0
+ - 49 -  // - 34 - 34/49 = 69.388%
+
+Es können somit durch die Kombination von '0' und '1' 2^15 Codes analysiert werden.
+
+Bei diesem 7x7 Muster müssen 17 von 49 Pixel schwarz und 17 von 49 Pixel weiß sein!
+
+Das Verhältnis der Kreisfläche die ein Rechteck gerade so umgibt und der Rechteckfläche berechnet sich wie folgt:
+
+Rechteck mit Kantenlaenge K: K*K = R_A
+Kreis mit Radius R: pi*R^2 = K_A
+
+R^2 = 2* (K/2)^2 = (K^2)/2
+R(K) = sqrt((K/2)^2 + (K/2)^2)
+R(K) = sqrt( (K^2)/2 )
+K(R) = sqrt( 2*(R^2) )
+
+R_A / K_A = K*K / pi*( (K/2)^2 + (K/2)^2 ) = K*K / pi*2*(K/2)^2 = 2*K^2 / pi*K^2 = 2/pi
+
+Ein CircleSegment muss demnach ueberprueft werden auf   Verhaeltnismaeßig mindestens (2/pi * 17/49) x 1en
+                                                        Verhaeltnismaeßig wenigstens (2/pi * 17/49) x 0en

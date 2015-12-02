@@ -10,7 +10,9 @@ LDFLAGS = -L/usr/lib/arm-linux-gnueabihf/ -lpng -lz
 NAME = png
 
 CSOURCE =
-CPPSOURCE = test.cpp readpng.cpp format.cpp circlesegment.cpp
+CPPSOURCE = test.cpp readpng.cpp matrixprocessing.cpp circlesegment.cpp searcher.cpp
+
+IMAGE = pngs/document4.png
 #################
 
 OBJS += $(patsubst %.cpp, %.o, $(filter %.cpp, $(CPPSOURCE)))
@@ -22,11 +24,19 @@ OBJS += $(patsubst $.c, %.o, $(filter %.c, $(CSOURCE)))
 %.o : %.cpp
 	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
-default :
+default : png
+	$(MAKE) $(NAME)
+	./$(NAME) $(IMAGE) > output
+	leafpad output &
+
+compile : 
 	$(MAKE) $(NAME)
 
-all :
-	$(MAKE) $(NAME)	
+run :
+	./$(NAME) $(IMAGE)
+
+#all :
+#	$(MAKE) $(NAME)	
 
 $(NAME) : $(OBJS)
 	$(CXX) $(CFLAGS) -o $(NAME) $(OBJS) $(LDFLAGS)
