@@ -113,7 +113,7 @@ png_bytep readpng_get_image(png_structp* png_ptr, png_infop* info_ptr, png_infop
         numrowbytes = png_get_rowbytes(*png_ptr, *info_ptr);
         png_bytep row_pointers[height];
 
-        dataBlock = (png_bytep)malloc(sizeof(png_bytep)*numrowbytes*height);
+        dataBlock = (png_bytep)malloc(sizeof(png_byte)*numrowbytes*height);
         for(png_uint_32 i = 0; i<height; i++)
                 row_pointers[i] = dataBlock + i*numrowbytes;
 

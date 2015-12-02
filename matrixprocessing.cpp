@@ -14,20 +14,18 @@ bool* get_bitmatrix(int* significance_mat, uint32_t pwidth, uint32_t pheight, in
         return bitmat;
 }
 
-void quickdownscale(png_bytep pixeldata, png_uint_32* pwidth, png_uint_32* pheight)
+png_bytep quickdownscale(png_bytep pixeldata, png_uint_32* pwidth, png_uint_32* pheight)
 {
         png_uint_32 width = (*pwidth)/2;
         png_uint_32 height = (*pheight)/2;
 
-        png_bytep tmppixeldata = pixeldata;
-        pixeldata = (png_bytep)malloc(sizeof(png_byte)*width*height*3);
+        png_bytep tmppixeldata = (png_bytep)malloc(sizeof(png_byte)*width*height*3);
 
         int sumr, sumg, sumb;
         for(png_uint_32 h = 0; h < height; h++)
         {
                 for(png_uint_32  w = 0; w < width; w++)
                 {
-                        /*
                         sumr = 0;
                         sumg = 0;
                         sumb = 0;
@@ -35,27 +33,20 @@ void quickdownscale(png_bytep pixeldata, png_uint_32* pwidth, png_uint_32* pheig
                         {
                                 for(int j = 0; j<=3; j+=3)
                                 {
-                                        sumr += *(pixeldata+(h+i)*(*pwidth)*3+(2*w+j));
-                                        sumg += *(pixeldata+(h+i)*(*pwidth)*3+(2*w+j)+1);
-                                        sumb += *(pixeldata+(h+i)*(*pwidth)*3+(2*w+j)+2);
+                                        sumr += *(pixeldata+(2*h+i)*(*pwidth)*3+(2*w+j));
+                                        sumg += *(pixeldata+(2*h+i)*(*pwidth)*3+(2*w+j)+1);
+                                        sumb += *(pixeldata+(2*h+i)*(*pwidth)*3+(2*w+j)+2);
                                 }
                         }
                         *(tmppixeldata+h*width*3+w) = sumr/4; 
                         *(tmppixeldata+h*width*3+w+1) = sumg/4;
                         *(tmppixeldata+h*width*3+w+2) = sumb/4;
-                        */
-
-                        *(pixeldata+h*width*3+3*w) = *(tmppixeldata+12*h*width+6*w); // +(2*h * (width*2) * 3) + (2*w * 3)
-                        *(pixeldata+h*width*3+3*w+1) = *(tmppixeldata+12*h*width+6*w+1);
-                        *(pixeldata+h*width*3+3*w+2) = *(tmppixeldata+12*h*width+6*w+2);
                 }
         }
         *pwidth = width;
         *pheight = height;
-//                png_bytep eraser = pixeldata;
-//               pixeldata = tmppixeldata;
-//                free(eraser);
-        std::cout << "new width " << *pwidth << std::endl;
+        free(pixeldata);
+        return tmppixeldata;
 }
 
 int* get_significance_matrix(float* pixeldata, uint32_t pwidth, uint32_t pheight, float lref, float aref, float bref)
