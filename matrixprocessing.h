@@ -27,7 +27,8 @@ int* get_valuable_chunks(bool*, uint32_t, uint32_t);
 bool* get_bitmatrix(int*, uint32_t, uint32_t, int);
 
 //datamatrix(pixeldata), address of width-var, address of height-var, maxlength(width or height)
-void quickdownscale(png_bytep, png_uint_32*, png_uint_32*);
+png_bytep quickdownscale(png_bytep, png_uint_32*, png_uint_32*);
+bool* quickdownscale2(bool*, png_uint_32*, png_uint_32*);
 
 //bitmatrix, width, height, kernelradius, extend ones or zeros,[search criteria:] more or less of (ones/zeros), threshold for extension
 bool* filter_median_square(bool*, uint32_t, uint32_t, int, bool, bool, int);

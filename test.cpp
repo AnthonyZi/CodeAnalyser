@@ -5,60 +5,7 @@
 #include "matrixprocessing.h"
 #include "circlesegment.h"
 #include "searcher.h"
-
-void printarr(bool* arr,unsigned int width,unsigned int height)
-{
-        for(unsigned int i = 0; i<height; i++)
-        {
-                for(unsigned int j = 0; j<width; j++)
-                {
-                        std::cout << (*(arr+i*width+j) ? "0" : "/" );
-                }
-                std::cout << std::endl;
-        }
-        std::cout << "----" << std::endl;
-}
-
-void printarr(int* arr,unsigned int width,unsigned int height)
-{
-        for(unsigned int i = 0; i<height; i++)
-        {
-                for(unsigned int j = 0; j<width; j++)
-                {
-                        std::cout << (*(arr+i*width+j) ? "0" : "/" );
-                }
-                std::cout << std::endl;
-        }
-        std::cout << "----" << std::endl;
-}
-
-void printarrhex(png_bytep arr, unsigned int width, unsigned int height)
-{
-        for(png_uint_32 i = 0; i<height/100; i++)
-        {
-                for(png_uint_32 j = 0; j<width/33; j++)
-                {
-                        int tmp = *(arr+i*width*3+j);
-                        std::cout << std::hex  << tmp << " ";
-                }
-                std::cout << std::dec << std::endl;
-        }
-        std::cout << "----" << std::endl;
-}
-
-void printarrhexlim(png_bytep arr, unsigned int width, unsigned int height)
-{
-        for(png_uint_32 i = 0; i < 30; i++)
-        {
-                for(png_uint_32 j = 0; j < 90; j++)
-                {
-                        int tmp = *(arr+i*width*3+j);
-                        std::cout << std::hex << tmp << " ";
-                }
-                std::cout << std::dec << std::endl;
-        }
-        std::cout << "----" << std::endl;
-}
+#include "writepng.h"
 
 int main(int argc, char* argv[])
 {
@@ -99,7 +46,6 @@ int main(int argc, char* argv[])
 
         //read png
         at = std::time(NULL);
-        std::cout << "read png: ";
         if(readpng_init(fp, &png_ptr, &info_ptr))
                 return 4;
 
@@ -112,26 +58,27 @@ int main(int argc, char* argv[])
         fclose(fp);
         png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
         bt = std::time(NULL);
+        std::cout << "read png: ";
         std::cout << bt-at << std::endl;
         //read end
 
         if(pixeldata == NULL)
                 return 5;
 
-        printarrhexlim(pixeldata, width, height);
+        save_png(pixeldata, width, height, "debugpng/copy.png");
 
-        at = std::time(NULL);
         //DOWNSCALE image if either width or height is greater than 1024
-        while(width > 780 || height > 780)
+        at = std::time(NULL);
+        while(width > 2000 || height > 2000)
         {
-                quickdownscale(pixeldata, &width, &height);
-                printarrhexlim(pixeldata, width, height);
+                std::cout << "width: " << width << " height: " << height << std::endl;
+                pixeldata = quickdownscale(pixeldata, &width, &height);
+                std::cout << "xwidth: " << width << " height: " << height << std::endl;
         }
         bt = std::time(NULL);
-        std::cout << "(" << width << "," << height << ") rescale: ";
-        std::cout << bt-at << " - new width/height: " << width << "/" << height << std::endl;
+        std::cout << "downscaling: " << bt-at << std::endl;
 
-//        printarrhex(pixeldata, width, height);
+        save_png(pixeldata, width, height, "debugpng/after_scaling.png");
 
         //CONVERT rgb-matrix to lab-matrix
         std::cout << "conversion: ";
@@ -148,7 +95,6 @@ int main(int argc, char* argv[])
         std::cout << "searching for: " << red << " " << green << " " << blue << "(rgb)";
         std::cout << " -> " << labref[0] << " " << labref[1] << " " << labref[2] << "(lab)" << std::endl;
 
-        //printarr(lab_mat, width, height);
 
         //BUILD SIGNIFICANCEMATRIX
         std::cout << "building up significance-matrix" << std::endl;
@@ -161,7 +107,6 @@ int main(int argc, char* argv[])
         bt = std::time(NULL);
         std::cout << bt-at << std::endl;
 
-        //printarr(significance_mat, width, height);
 
         //BUILD MATRIXMASK
         std::cout << "checking significance for values under threshold-value: "<< labthreshold << std::endl;
@@ -171,9 +116,7 @@ int main(int argc, char* argv[])
         bt = std::time(NULL);
         std::cout << "obtain bit-matrix: " << bt-at << std::endl;
 
-        printarr(matrixmask, width, height);
-        std::cout << std::endl;
-        at = std::time(NULL);
+        save_png(matrixmask, width, height, "debugpng/binary_1.png");
         std::cout << "processing(erase small structures): ";
         bool* tmpmatrixmask = (bool*)malloc(sizeof(bool)*width*height);
         for(uint32_t i = 0; i < width*height; i++)
@@ -187,7 +130,7 @@ int main(int argc, char* argv[])
 
         bt = std::time(NULL);
         std::cout << bt-at << std::endl;
-        printarr(matrixmask, width, height);
+        save_png(matrixmask, width, height, "debugpng/binary_2.png");
 
         //free pointers used in programm
         free(significance_mat);
@@ -199,7 +142,6 @@ int main(int argc, char* argv[])
 
         std::cout << "test for circlematrix" << std::endl;
 
-        printarr(circlemat, dia, dia);
         
         std::cout << "convolution:" << std::endl;
 

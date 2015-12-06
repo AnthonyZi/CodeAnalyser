@@ -24,7 +24,7 @@ png_bytep quickdownscale(png_bytep pixeldata, png_uint_32* pwidth, png_uint_32* 
         int sumr, sumg, sumb;
         for(png_uint_32 h = 0; h < height; h++)
         {
-                for(png_uint_32  w = 0; w < width; w++)
+                for(png_uint_32  w = 0; w < width*3; w+=3)
                 {
                         sumr = 0;
                         sumg = 0;
@@ -41,6 +41,11 @@ png_bytep quickdownscale(png_bytep pixeldata, png_uint_32* pwidth, png_uint_32* 
                         *(tmppixeldata+h*width*3+w) = sumr/4; 
                         *(tmppixeldata+h*width*3+w+1) = sumg/4;
                         *(tmppixeldata+h*width*3+w+2) = sumb/4;
+/*
+                *(tmppixeldata+h*width*3+w) = *(pixeldata+2*h*(*pwidth)*3+2*w);
+                *(tmppixeldata+h*width*3+w+1) = *(pixeldata+2*h*(*pwidth)*3+2*w+1);
+                *(tmppixeldata+h*width*3+w+2) = *(pixeldata+2*h*(*pwidth)*3+2*w+2);
+*/
                 }
         }
         *pwidth = width;

@@ -6,7 +6,7 @@ search:
 # buchstabenbreite I: 4/1655 ; 2/550 ; 2/500 ; 1/612
 # median-filter reverse um gefundene stellen wieder in die richtige groesse zu bringen
 # suche felder, in welchen kreise gefunden werden koennten. definiere diese und fuehre dann die suche nur auf diesen feldern aus
-* mistake correction in matrixproccessing.cpp > quickdownscale! ..rgw-werte einzeln betrachten!
+# mistake correction in matrixproccessing.cpp > quickdownscale! ..rgw-werte einzeln betrachten!
 * suche kreise
 **    wende einen medianfilter (groeße abhängig vom smalldiameter) auf das bild an um treffgenauigkeit zu erhoehen
 **    iteriere durch das gesamte bild durch und suche nach circlesegments

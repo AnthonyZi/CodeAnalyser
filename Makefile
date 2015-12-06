@@ -12,7 +12,7 @@ NAME = png
 CSOURCE =
 CPPSOURCE = test.cpp readpng.cpp matrixprocessing.cpp circlesegment.cpp searcher.cpp
 
-IMAGE = pngs/document4.png
+IMAGE = pngs/lieferschein.png
 #################
 
 OBJS += $(patsubst %.cpp, %.o, $(filter %.cpp, $(CPPSOURCE)))
@@ -26,8 +26,8 @@ OBJS += $(patsubst $.c, %.o, $(filter %.c, $(CSOURCE)))
 
 default : png
 	$(MAKE) $(NAME)
-	./$(NAME) $(IMAGE) > output
-	leafpad output &
+	./$(NAME) $(IMAGE)
+	gpicview debugpng/copy.png
 
 compile : 
 	$(MAKE) $(NAME)
