@@ -10,7 +10,7 @@ LDFLAGS = -L/usr/lib/arm-linux-gnueabihf/ -lpng -lz
 NAME = png
 
 CSOURCE =
-CPPSOURCE = test.cpp readpng.cpp matrixprocessing.cpp circlesegment.cpp searcher.cpp
+CPPSOURCE = test.cpp readpng.cpp matrixprocessing.cpp circlesegment.cpp searcher.cpp rgbimage.cpp labimage.cpp bitimage.cpp
 
 IMAGE = pngs/lieferschein.png
 #################
