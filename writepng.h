@@ -141,9 +141,9 @@ int save_png(bool* pixeldata, png_uint_32 width, png_uint_32 height, const char 
         {
                 for(png_uint_32 w = 0; w < width; w++)
                 {
-                        *(tmpdata+h*width*3+w*3) = *(pixeldata+h*width+w) ? 0 : 0xff;
-                        *(tmpdata+h*width*3+w*3+1) = *(pixeldata+h*width+w) ? 0 : 0xff;
-                        *(tmpdata+h*width*3+w*3+2) = *(pixeldata+h*width+w) ? 0 : 0xff;
+                        *(tmpdata+h*width*3+w*3) = *(pixeldata+h*width+w) ? 0 : 0xfe;
+                        *(tmpdata+h*width*3+w*3+1) = *(pixeldata+h*width+w) ? 0 : 0xfe;
+                        *(tmpdata+h*width*3+w*3+2) = *(pixeldata+h*width+w) ? 0 : 0xfe;
                 }
         }
         
