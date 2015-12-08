@@ -21,6 +21,8 @@ private:
         BITImage();
         int* getSignificance(LABImage* plab);
         bool* get_bitmatrix(int* sigmat);
+        bool* filter_median_square(bool* tmpimage, int kernelradius, bool ones, bool more, int threshold);
+        int count_bits_in_square(bool* tmpimage, int kernelradius, bool ones, int xoff, int yoff);
 
 public:
         BITImage(LABImage* plab);
@@ -29,6 +31,8 @@ public:
         void setImage(LABImage* plab);
         void setRef(unsigned char rref, unsigned char gref, unsigned char bref);
         void setThreshold(int threshold);
+
+        void erase_small_structures();
 
         int getWidth();
         int getHeight();

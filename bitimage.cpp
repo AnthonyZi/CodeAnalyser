@@ -99,3 +99,62 @@ unsigned char* BITImage::getREF()
 {
         return &rgbref[0];
 }
+
+void BITImage::erase_small_structures()
+{
+        bool* tmpimage = (bool*)malloc(sizeof(bool)*width*height);
+        for(uint32_t i = 0; i < (uint32_t)width*height; i++)
+                *(tmpimage+i) = *(pixels+i);
+        int filterclass = (int)log2((width < height ? width : height)/100);
+        for(int i = 0; i < filterclass; i++)
+                tmpimage = filter_median_square(tmpimage, 1, 0, 1, 2);
+        tmpimage = filter_median_square(tmpimage, filterclass, 1, 1, 1);
+        for(uint32_t i = 0; i < (uint32_t)width*height; i++)
+                *(pixels+i) = (*(pixels+i) & *(tmpimage+i));
+}
+
+bool* BITImage::filter_median_square(bool* ptmpimage, int kernelradius, bool ones, bool more, int threshold)
+{
+        bool* tmp = (bool*)malloc(sizeof(bool)*width*height);
+        if(more)
+        {
+                for(int h = 0; h < height; h++)
+                {
+                        for(int w = 0; w < width; w++)
+                        {
+                                *(tmp+h*width+w) = count_bits_in_square(ptmpimage, kernelradius, ones, w, h) > threshold ? ones : !ones;
+                        }
+                }
+        }
+        else
+        {
+                for(int h = 0; h < height; h++)
+                {
+                        for(int w = 0; w < width; w++)
+                        {
+                                *(tmp+h*width+w) = count_bits_in_square(ptmpimage, kernelradius, ones, w, h) < threshold ? ones : !ones;
+                        }
+                }
+        }
+        free(ptmpimage);
+        return tmp;
+}
+
+int BITImage::count_bits_in_square(bool* ptmpimage, int kernelradius, bool ones, int xoff, int yoff)
+{ 
+        int sum = 0; 
+        for(int y = -kernelradius; y <= kernelradius; y++) 
+        { 
+                for(int x = -kernelradius; x <= kernelradius; x++) 
+                {
+                        if(xoff+x > 0 && xoff+x < width && yoff+y > 0 && yoff+y < height)
+                        { 
+                                sum += *(ptmpimage+(yoff+y)*width+(xoff+x)); 
+                        } 
+                } 
+        } 
+        if(ones) 
+                return sum; 
+        else 
+                return (2*kernelradius+1)*(2*kernelradius+1)-sum; 
+}

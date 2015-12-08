@@ -106,15 +106,7 @@ int main(int argc, char* argv[])
 
 
         t1 = std::clock(); //beta
-        bool* tmpmatrixmask = (bool*)malloc(sizeof(bool)*bit->getWidth()*bit->getHeight());
-        for(uint32_t i = 0; i < (uint32_t)bit->getWidth()*bit->getHeight(); i++)
-                *(tmpmatrixmask+i) = *(bit->getPixels()+i);
-        int filterclass = (int)log2((bit->getWidth() < bit->getHeight() ? bit->getWidth() : bit->getHeight())/100);
-        for(int i = 0; i < filterclass; i++)
-                tmpmatrixmask = filter_median_square(tmpmatrixmask, bit->getWidth(), bit->getHeight(), 1, 0, 1, 2);
-        tmpmatrixmask = filter_median_square(tmpmatrixmask, bit->getWidth(), bit->getHeight(), filterclass, 1, 1, 1);
-        for(uint32_t i = 0; i < (uint32_t)bit->getWidth()*bit->getHeight(); i++)
-                *(bit->getPixels()+i) = (*(bit->getPixels()+i)) & (*(tmpmatrixmask+i)); 
+        bit->erase_small_structures();
         t2 = std::clock(); //beta
         std::cout << "processing(removal of small structures): "; //beta
         std::cout << 1000.0*(t2-t1) / CLOCKS_PER_SEC << " ms" << std::endl; //beta

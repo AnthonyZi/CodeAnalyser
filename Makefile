@@ -3,7 +3,7 @@ CC = gcc
 CXX = g++
 
 ##################
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -O3
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = -L/usr/lib/arm-linux-gnueabihf/ -lpng -lz
 
