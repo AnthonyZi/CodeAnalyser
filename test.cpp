@@ -1,8 +1,8 @@
 #include <iostream>
-#include <stdlib.h>
-#include <time.h>
+#include <cstdlib>
+#include <ctime>
 #include "readpng.h"
-#include "matrixprocessing.h"
+//#include "matrixprocessing.h"
 #include "circlesegment.h"
 #include "searcher.h"
 #include "writepng.h"
@@ -15,63 +15,30 @@ int main(int argc, char* argv[])
 {
         if(argc != 2)
                 return 1;
-        if(check_png_version())
-                return 2;
-        
-        //load file and load variables to read png
-        FILE* fp = fopen(argv[1], "rb");
-        if(!fp)
-        {
-                std::cerr << "couldn't open " << argv[1] << std::endl;
-                return 3;
-        }
-        png_structp png_ptr = NULL;
-        png_infop info_ptr = NULL;
-        png_uint_32 height;
-        png_uint_32 width;
-
-        std::clock_t t1, t2; //beta
 
         //preparing class-pointers
         RGBImage* rgb;
         LABImage* lab;
         BITImage* bit;
-        
-        //pointer for matrices (picturedata in different formats)
-        png_bytep pixeldata;
 
+        std::clock_t t1, t2; //beta
 
         //START READ
         t1 = std::clock(); //beta
-        if(readpng_init(fp, &png_ptr, &info_ptr))
-                return 4;
-
-        pixeldata = readpng_get_image_white_alpha(&png_ptr, &info_ptr, NULL);
-
-        height = png_get_image_height(png_ptr, info_ptr);
-        width = png_get_image_width(png_ptr, info_ptr);
-
-        fclose(fp);
-        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+        rgb = new RGBImage(argv[1]);
         t2 = std::clock(); //beta
         std::cout << "read png: "; //beta
         std::cout << 1000.0*(t2-t1) / CLOCKS_PER_SEC << " ms" << std::endl; //beta
         //END READ
 
-        if(pixeldata == NULL)
-                return 5;
-
         t1 = std::clock(); //beta
-        save_png(pixeldata, width, height, "debugpng/copy.png"); //beta
+        save_png(rgb->getPixels(), rgb->getWidth(), rgb->getHeight(), "debugpng/copy.png"); //beta
         t2 = std::clock(); //beta
         std::cout << "saving copy: "; //beta
         std::cout << 1000.0*(t2-t1) / CLOCKS_PER_SEC << " ms" << std::endl; //beta
 
+
         //START IMAGEPROCESSING
-        rgb = new RGBImage(pixeldata, width, height);
-        free(pixeldata);
-
-
         t1 = std::clock(); //beta
         rgb->quickdownscale(2000);
         t2 = std::clock(); //beta
@@ -98,8 +65,8 @@ int main(int argc, char* argv[])
         float* labref = (float*)malloc(sizeof(float)*3);
         labref = lab->getLAB(*(rgbref), *(rgbref+1), *(rgbref+2));
         std::cout << "calculation of bit-matrix: "; //beta
-        std::cout << (int)*(rgbref) << " " << (int)*(rgbref+1) << " " << (int)*(rgbref+2) << " (rgb); " << std::dec << *(labref) << " " << *(labref+1) << " " << *(labref+2) << " (lab): "; //beta
         std::cout << 1000.0*(t2-t1) / CLOCKS_PER_SEC << " ms" << std::endl; //beta
+        std::cout << "[ " << (int)*(rgbref) << " " << (int)*(rgbref+1) << " " << (int)*(rgbref+2) << " (rgb) -> " << std::dec << *(labref) << " " << *(labref+1) << " " << *(labref+2) << " (lab) ]" << std::endl; //beta
 
 
         save_png(bit->getPixels(), bit->getWidth(), bit->getHeight(), "debugpng/binary_1.png");

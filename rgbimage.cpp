@@ -1,17 +1,9 @@
 #include "rgbimage.h"
 
-RGBImage::RGBImage(png_bytep pdata, png_uint_32 pwidth, png_uint_32 pheight)
+RGBImage::RGBImage(std::string ppath)
 {
-        width = pwidth;
-        height = pheight;
-        pixels = copydata(pdata, width*height*3);
-}
-
-void RGBImage::setPixels(png_bytep pdata, png_uint_32 pwidth, png_uint_32 pheight)
-{
-        width = pwidth;
-        height = pheight;
-        pixels = copydata(pdata, width*height*3);
+        if(loadPNG(ppath))
+                std::cerr << "loading of the image failed" << std::endl;
 }
 
 void RGBImage::quickdownscale(png_uint_32 pmaxwidth, png_uint_32 pmaxheight)
@@ -55,6 +47,46 @@ void RGBImage::quickdownscale(png_uint_32 pmax)
         quickdownscale(pmax, pmax);
 }
 
+int RGBImage::loadPNG(std::string ppath)
+{
+        pixels = NULL;
+
+        if(check_png_version())
+        {
+                std::cerr << "png version check failed" << std::endl;
+                return 1;
+        }
+
+        //load file and load variables to read png
+        FILE* fp = fopen(ppath.c_str(), "rb");
+        if(!fp)
+        {
+                std::cerr << "couldn't open " << ppath << std::endl;
+                return 1;
+        }
+        png_structp png_ptr = NULL;
+        png_infop info_ptr = NULL;
+
+        if(readpng_init(fp, &png_ptr, &info_ptr))
+        {
+                std::cerr << "png-read initialisation failed" << std::endl;
+                return 1;
+        }
+        pixels = readpng_get_image_white_alpha(&png_ptr, &info_ptr, NULL);
+
+        width = png_get_image_width(png_ptr, info_ptr);
+        height = png_get_image_height(png_ptr, info_ptr);
+
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+
+        if(pixels == NULL)
+        {
+                std::cerr << "pixel-data is not valid" << std::endl;
+        }
+        return 0;
+}
+
 png_uint_32 RGBImage::getWidth()
 {
         return width;
@@ -68,14 +100,4 @@ png_uint_32 RGBImage::getHeight()
 png_bytep RGBImage::getPixels()
 {
         return pixels;
-}
-
-png_bytep RGBImage::copydata(png_bytep original, png_uint_32 length)
-{
-        png_bytep copy = (png_bytep)malloc(sizeof(png_byte)*length);
-        for(png_uint_32 i = 0; i < length; i++)
-        {
-                *(copy+i) = *(original+i);
-        }
-        return copy;
 }
