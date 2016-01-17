@@ -1,9 +1,22 @@
 #include "circlesegment.h"
 
-int* CircleSegment::getCircleMatrix(int diameter)
+CircleSegment::CircleSegment(bool* pdata, int pdiameter) : segmentData(pdata)
 {
-        int* circlemat;
-        circlemat = (int*)malloc(sizeof(int)*diameter*diameter);
+        setDiameter(pdiameter);
+}
+
+void CircleSegment::setDiameter(int pdiameter)
+{
+        diameter = pdiameter;
+        dotwidth = sqrt(2*diameter*diameter);
+        dotkernel = getCircleMatrix(diameter);
+        dotkernelsum = count_ones(dotkernel, dotwidth);
+}
+
+bool* CircleSegment::getCircleMatrix(int diameter)
+{
+        bool* circlemat;
+        circlemat = (bool*)malloc(sizeof(bool)*diameter*diameter);
 
         for(int i = 0; i < diameter*diameter; i++)
         {
@@ -14,7 +27,7 @@ int* CircleSegment::getCircleMatrix(int diameter)
         return circlemat;
 }
 
-void CircleSegment::invertCircleshape(int* matrix, int matrixwidth, int diameter)
+void CircleSegment::invertCircleshape(bool* matrix, int matrixwidth, int diameter)
 {
         int mathhalfleftborder = (matrixwidth/2)-1;
         int mathhalfrightborder;
@@ -79,8 +92,22 @@ void CircleSegment::invertCircleshape(int* matrix, int matrixwidth, int diameter
         }
 }
 
-void CircleSegment::setData(int* data, int dia)
+void CircleSegment::setData(bool* pdata, int pdiameter)
 {
-        segmentData = data;
-        diameter = dia;
+        segmentData = pdata;
+        setDiameter(pdiameter);
+}
+
+
+int CircleSegment::count_ones(bool* pmat, int pdiameter)
+{
+        int sum = 0;
+        for(int i = 0; i<pdiameter; i++)
+        {
+                for(int j = 0; j<pdiameter; j++)
+                {
+                        sum += *(pmat+i*pdiameter+j);
+                }
+        }
+        return sum;
 }

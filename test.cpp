@@ -6,6 +6,7 @@
 #include "circlesegment.h"
 #include "searcher.h"
 #include "writepng.h"
+#include "shape.h"
 
 #include "rgbimage.h"
 #include "labimage.h"
@@ -98,6 +99,14 @@ int main(int argc, char* argv[])
         s->setDia(70);
 //        s->searchSegments();
 */
+        Searcher *s = new Searcher(bit);
+        s->labelImage();
+
+        Searcher *b = new Searcher(*s);
+        save_png(b->getImage()->getPixels(), b->getImage()->getWidth(), b->getImage()->getHeight(), "debugpng/copysearcher.png");
+
+        Shape* sh = new Shape(CIRCLE, 10);
+        save_png(sh->matrix, sh->size, sh->size, "debugpng/shape.png");
 
         return 0;
 }

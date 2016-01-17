@@ -45,15 +45,17 @@ Bei diesem 7x7 Muster müssen 17 von 49 Pixel schwarz und 17 von 49 Pixel weiß 
 
 Das Verhältnis der Kreisfläche die ein Rechteck gerade so umgibt und der Rechteckfläche berechnet sich wie folgt:
 
-Rechteck mit Kantenlaenge K: K*K = R_A
-Kreis mit Radius R: pi*R^2 = K_A
+Rechteck mit Kantenlaenge K: K*K = K_A
+Kreis mit Radius R: pi*R^2 = R_A
 
 R^2 = 2* (K/2)^2 = (K^2)/2
 R(K) = sqrt((K/2)^2 + (K/2)^2)
 R(K) = sqrt( (K^2)/2 )
 K(R) = sqrt( 2*(R^2) )
 
-R_A / K_A = K*K / pi*( (K/2)^2 + (K/2)^2 ) = K*K / pi*2*(K/2)^2 = 2*K^2 / pi*K^2 = 2/pi
+K_A / R_A = K*K / pi*( (K/2)^2 + (K/2)^2 ) = K*K / pi*2*(K/2)^2 = 2*K^2 / pi*K^2 = 2/pi
+
+K*K / pi*(K^2)/2 = K^2 * 2 / pi*(K^2) = 2/pi
 
 Ein CircleSegment muss demnach ueberprueft werden auf   Verhaeltnismaeßig mindestens (2/pi * 17/49) x 1en
                                                         Verhaeltnismaeßig wenigstens (2/pi * 17/49) x 0en

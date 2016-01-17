@@ -16,6 +16,24 @@ BITImage::BITImage(LABImage* plab, unsigned char rref, unsigned char gref, unsig
         setImage(plab);
 }
 
+BITImage::BITImage(const BITImage &pbitimage)
+{
+        std::cout << "call of copy-constructor bitimage" << std::endl;
+        width = pbitimage.width;
+        height = pbitimage.height;
+        threshold = pbitimage.threshold;
+        for(int i = 0; i<3; i++)
+                rgbref[i] = pbitimage.rgbref[i];
+        pixels = (bool*)malloc(sizeof(bool)*width*height);
+        for(int h = 0; h<height; h++)
+        {
+                for(int w = 0; w<width; w++)
+                {
+                        *(pixels+h*width+w) = *(pbitimage.pixels+h*width+w);
+                }
+        }
+}
+
 void BITImage::setImage(LABImage* plab)
 {
         width = plab->getWidth();

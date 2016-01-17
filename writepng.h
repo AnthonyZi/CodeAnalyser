@@ -1,3 +1,6 @@
+#ifndef WRITEPNG_H
+#define WRITEPNG_H
+
 #include <png.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -172,3 +175,5 @@ int save_png(bool* pixeldata, png_uint_32 width, png_uint_32 height, const char 
         fclose (fp);
         return status;
 }
+
+#endif

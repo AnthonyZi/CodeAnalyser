@@ -25,11 +25,16 @@ private:
         int count_bits_in_square(bool* tmpimage, int kernelradius, bool ones, int xoff, int yoff);
 
 public:
+        //create new image out of plab and standard refs
         BITImage(LABImage* plab);
+        //create new image out of plab and specified refs
         BITImage(LABImage* plab, unsigned char rref, unsigned char gref, unsigned char bref);
+        //copy-constructor
+        BITImage(const BITImage &pbitimage);
 
         void setImage(LABImage* plab);
         void setRef(unsigned char rref, unsigned char gref, unsigned char bref);
+        //optional (normally unused because standard threshold is good)
         void setThreshold(int threshold);
 
         void erase_small_structures();

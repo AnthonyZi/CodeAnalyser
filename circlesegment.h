@@ -9,17 +9,22 @@ class CircleSegment
 {
 
 private:
-        int* segmentData;
-        int* ringMatrix;
+        bool* segmentData;
         int diameter;
+        int dotwidth;
+        bool* dotkernel;
+        int dotkernelsum;
+
+        void setDiameter(int pdiameter);
+        static void invertCircleshape(bool* matrix, int matrixwidth, int diameter);
 
 public:
-        static int* getCircleMatrix(int diameter);
+        CircleSegment(bool* pdata, int pdiameter);
 
-        void setData(int* data, int diameter);
+        void setData(bool* pdata, int pdiameter);
 
-private:
-        static void invertCircleshape(int* matrix, int matrixwidth, int diameter);
+        static bool* getCircleMatrix(int pdiameter);
+        static int count_ones(bool *pmat, int pdiameter);
 };
 
 #endif

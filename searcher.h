@@ -5,15 +5,15 @@
 #include <ctime> //penis
 #include <vector>
 #include "circlesegment.h"
+#include "bitimage.h"
 
 class Searcher
 {
 private:
-        bool* bitmatrix;
-        int bitmatwidth, bitmatheight;
+        BITImage *image;
         int diameter;
         int dotwidth;
-        int* circlekernel;
+        bool* circlekernel;
         int kernelsum;
 
         std::vector<CircleSegment> matchingSegments;
@@ -21,14 +21,17 @@ private:
 private:
         Searcher();
         int conv2d_and_sum(int xoff, int yoff);
-        int circle_sum();
+        void setDiameter(int pdiameter);
 
 public:
-        Searcher(bool* segmat, int width, int height, int dia);
-        Searcher(bool* segmat, int width, int height);
+        Searcher(BITImage *pimage, int pdiameter);
+        Searcher(BITImage *pimage);
 
-        void setDia(int dia);
+        void filter_median_kernel(BITImage *pimage, bool* pkernel, int pkernelwidth, int pkernelheight, bool ones, bool more, int threshold);
         void searchSegments();
+        void labelImage();
+        BITImage* getImage();
+
 };
 
 #endif
