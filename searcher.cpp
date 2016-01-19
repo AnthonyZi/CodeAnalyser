@@ -9,6 +9,20 @@ Searcher::Searcher(BITImage *pimage) : image(pimage)
 {
 }
 
+Searcher::Searcher(const Searcher &obj)
+{
+        std::cout << "call of copy-constructor searcher" << std::endl;
+        diameter = obj.diameter;
+        dotwidth = obj.dotwidth;
+        kernelsum = obj.kernelsum;
+
+        for(unsigned int i = 0; i < obj.matchingSegments.size(); i++)
+        {
+                matchingSegments.push_back(obj.matchingSegments[i]);
+        }
+        image = new BITImage(*obj.image);
+}
+
 void Searcher::setDiameter(int pdiameter)
 {
         diameter = pdiameter;
@@ -18,30 +32,6 @@ void Searcher::setDiameter(int pdiameter)
         std::cout << "dia " << diameter << std::endl; //penis
         std::cout << kernelsum << " kernelsum" << std::endl; //penis
 }
-
-void Searcher::filter_median_kernel(BITImage *pimage, bool* pkernel, int pkernelwidth, int pkernelheight, bool ones, bool more, int threshold)
-{
-       if(more)
-       {
-               for(int h = 0; h<pimage->getHeight(); h++)
-               {
-                       for(int w = 0; w<pimage->getWidth(); w++)
-                       {
-                               *(pimage->getPixels()+h*pimage->getWidth()+w) = 0;
-                       }
-               }
-       }
-       else
-       {
-       }
-}
-
-/*
-int count_overlapping_bits_image_kernel(Kernel *pkern, int xoff, int yoff)
-{
-
-}
-*/
 
 void Searcher::searchSegments()
 {
@@ -84,6 +74,11 @@ int Searcher::conv2d_and_sum(int xoff, int yoff)
 void Searcher::labelImage()
 {
         BITImage *tmp = new BITImage(*image);
+
+        Shape* circle = new Shape(0, 10);
+        filter_median(tmp, circle, 1, 1, 0.8f);
+        
+        save_png(tmp->getImage()->getPixels(), tmp->getImage()-getWidth(), tmp->getImage()->getHeight(), "debugpng/filtertest.png");
 }
 
 BITImage* Searcher::getImage()

@@ -34,6 +34,12 @@ BITImage::BITImage(const BITImage &pbitimage)
         }
 }
 
+void BITImage::setPixels(bool* ppixels)
+{
+        free(pixels);
+        pixels = ppixels;
+}
+
 void BITImage::setImage(LABImage* plab)
 {
         width = plab->getWidth();

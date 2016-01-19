@@ -6,6 +6,8 @@
 #include <vector>
 #include "circlesegment.h"
 #include "bitimage.h"
+#include "medianfilter.h"
+#include "writepng.h"
 
 class Searcher
 {
@@ -13,25 +15,22 @@ private:
         BITImage *image;
         int diameter;
         int dotwidth;
-        bool* circlekernel;
-        int kernelsum;
 
-        std::vector<CircleSegment> matchingSegments;
+        std::vector<BITImage*> matchingSegments;
 
 private:
         Searcher();
-        int conv2d_and_sum(int xoff, int yoff);
+        int conv2d_and_sum(int xoff, int yoff)
         void setDiameter(int pdiameter);
 
 public:
         Searcher(BITImage *pimage, int pdiameter);
         Searcher(BITImage *pimage);
+        Searcher(const Searcher &obj);
 
-        void filter_median_kernel(BITImage *pimage, bool* pkernel, int pkernelwidth, int pkernelheight, bool ones, bool more, int threshold);
         void searchSegments();
         void labelImage();
         BITImage* getImage();
-
 };
 
 #endif

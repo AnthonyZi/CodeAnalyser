@@ -32,6 +32,7 @@ public:
         //copy-constructor
         BITImage(const BITImage &pbitimage);
 
+        void setPixels(bool* ppixels);
         void setImage(LABImage* plab);
         void setRef(unsigned char rref, unsigned char gref, unsigned char bref);
         //optional (normally unused because standard threshold is good)

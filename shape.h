@@ -9,17 +9,19 @@
 
 class Shape
 {
-public: // penis
+public:
         bool* matrix;
-        int size;
+        int size, lefthalfsize, righthalfsize;
+        int onescounted;
         
         Shape();
 
 public:
         Shape(int shape, int size);
 
-        bool get(int xoff, int yoff);
+        bool* getmatrix();
         int getSize();
+        int getonescounted();
 
         static bool* getCircleShape(int size);
 };

@@ -5,8 +5,8 @@ Shape::Shape(int shape, int psize)
         std::cout << "constructor" << std::endl;
         switch(shape)
         {
-        case CIRCLE :
-                matrix = getCircleShape(size);
+        case CIRCLE:
+                matrix = getCircleShape(psize);
                 size = psize;
                 break;
         default :
@@ -14,85 +14,94 @@ Shape::Shape(int shape, int psize)
         }
 }
 
-bool* Shape::getCircleShape(int size)
+bool* Shape::getCircleShape(int psize)
 {
-        std::cout << "bla";
-        bool* shape = (bool*)malloc(sizeof(bool)*size*size);
+        bool* shape = (bool*)malloc(sizeof(bool)*psize*psize);
 
-        for(int i = 0; i<size*size; i++)
+        for(int i = 0; i<psize*psize; i++)
                 *(shape+i) = 0;
 
-        int mathhalfleftborder = (size/2)-1;
-        int mathhalfrightborder;
+        lefthalfsize = (psize/2)-1;
         int tmpVal = 0;
+        onescounted = 0;
         float x, y;
 
-        if(size%2 == 0)
+        if(psize%2 == 0)
         {
-                mathhalfrightborder = mathhalfleftborder+1;
+                righthalfsize = lefthalfsize+1;
 
                 //iteration over the width
-                for(int w = 0; w<size/2; w++)
+                for(int w = 0; w<=lefthalfsize; w++)
                 {
                         x = 0.5+w;
 
                         //iteration over the height
-                        for(int h = 0; h<size/2; h++)
+                        for(int h = 0; h<=lefthalfsize; h++)
                         {
                                 y = 0.5+h;
 
-                                tmpVal = (sqrt((x*x) + (y*y)) <= size/2 ? 1 : 0);
-                                *(shape + (mathhalfleftborder-h)*size + (mathhalfrightborder-w)) = tmpVal;
-                                *(shape + (mathhalfleftborder-h)*size + (mathhalfrightborder+w)) = tmpVal;
-                                *(shape + (mathhalfleftborder+h)*size + (mathhalfrightborder-w)) = tmpVal;
-                                *(shape + (mathhalfleftborder+h)*size + (mathhalfrightborder+w)) = tmpVal;
+                                tmpVal = ((x*x)+(y*y)) <= psize*psize/4 ? 1 : 0;
+                                *(shape + (lefthalfsize-h)*psize + (lefthalfsize-w)) = tmpVal;
+                                *(shape + (lefthalfsize-h)*psize + (righthalfsize+w)) = tmpVal;
+                                *(shape + (righthalfsize+h)*psize + (lefthalfsize-w)) = tmpVal;
+                                *(shape + (righthalfsize+h)*psize + (righthalfsize+w)) = tmpVal;
+
+                                if(tmpVal)
+                                        onescounted += 4;
                         }
                 }
         }
         else
         {
-                mathhalfrightborder = mathhalfleftborder+2;
+                righthalfsize = lefthalfsize+2;
 
                 //iteration over the width
-                for(int w = 0; w<size/2; w++)
+                for(int w = 0; w<psize/2; w++)
                 {
                         x = 1+w;
 
                         //iteration over the height
-                        for(int h = 0; h<size/2; h++)
+                        for(int h = 0; h<psize/2; h++)
                         {
                                 y = 1+h;
 
-                        tmpVal = (sqrt((x*x) + (y*y)) <= ((float)size/2)) ? 1 : 0;
+                                tmpVal = (((x*x)+(y*y)) <= psize*psize/4) ? 1 : 0;
 
-                        *(shape + (mathhalfleftborder-h)*size + (mathhalfleftborder - w)) = tmpVal;
-                        *(shape + (mathhalfleftborder-h)*size + (mathhalfrightborder + w)) = tmpVal;
-                        *(shape + (mathhalfrightborder+h)*size + (mathhalfleftborder - w)) = tmpVal;
-                        *(shape + (mathhalfrightborder+h)*size + (mathhalfrightborder + w)) = tmpVal;
+                                *(shape + (lefthalfsize-h)*psize + (lefthalfsize - w)) = tmpVal;
+                                *(shape + (lefthalfsize-h)*psize + (righthalfsize + w)) = tmpVal;
+                                *(shape + (righthalfsize+h)*psize + (lefthalfsize - w)) = tmpVal;
+                                *(shape + (righthalfsize+h)*psize + (righthalfsize + w)) = tmpVal;
+
+                                if(tmpVal)
+                                        onescounted += 4;                       }
                 }
-        }
 
-        int middle = (size/2);
-        for(int i = 0; i < middle; i++)
-        {
-                *(shape + (middle*size) + i) = 1;
-                *(shape + (i*size) + middle) = 1;
-                *(shape + (middle*size) + middle + i + 1) = 1;
-                *(shape + ((middle+i+1)*size) + middle) = 1;
+                int middle = (psize/2);
+                for(int i = 0; i < middle; i++)
+                {
+                        *(shape + (middle*psize) + i) = 1;
+                        *(shape + (i*psize) + middle) = 1;
+                        *(shape + (middle*psize) + middle + i + 1) = 1;
+                        *(shape + ((middle+i+1)*psize) + middle) = 1;
+                }
+                *(shape + (middle*psize) + middle) = 1;
         }
-        *(shape + (middle*size) + middle) = 1;
-        }
-        std::cout << "fertisch";
-        
+                
         return shape;
 }
 
-bool Shape::get(int xoff, int yoff)
+//for ease : shapes with an even siz
+bool* Shape::getmatrix()
 {
-        return 1;
+        return matrix;
 }
 
 int Shape::getSize()
 {
         return size;
+}
+
+int Shape::getonescounted()
+{
+        return onescounted;
 }
