@@ -2,3 +2,4 @@ pngs/*
 *.o
 png
 debugpng/*
+\.*\.swp

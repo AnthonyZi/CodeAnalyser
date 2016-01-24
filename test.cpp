@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "readpng.h"
-#include "circlesegment.h"
+//#include "circlesegment.h"
 #include "searcher.h"
 #include "writepng.h"
 #include "shape.h"
@@ -93,22 +93,23 @@ int main(int argc, char* argv[])
         
         std::cout << "convolution:" << std::endl; //beta
 
-        Searcher* s = new Searcher(bit->getPixels(), bit->getWidth(), bit->getHeight());
+//        Searcher* s = new Searcher(bit->getPixels(), bit->getWidth(), bit->getHeight());
 
         s->setDia(70);
 //        s->searchSegments();
 */
-        Searcher *s = new Searcher(bit);
+        Searcher *s = new Searcher(*bit);
         s->labelImage();
+        s->setDiameter(20);
 
-        Searcher *b = new Searcher(*s);
-        save_png(b->getImage()->getPixels(), b->getImage()->getWidth(), b->getImage()->getHeight(), "debugpng/copysearcher.png");
+//        Searcher *b = new Searcher(*s);
+//        save_png(b->getImage()->getPixels(), b->getImage()->getWidth(), b->getImage()->getHeight(), "debugpng/copysearcher.png");
 
-        Shape* sh = new Shape(0, 100);
-        save_png(sh->matrix, sh->size, sh->size, "debugpng/shape.png");
+//        Shape* sh = new Shape(0, 100);
+//        save_png(sh->matrix, sh->size, sh->size, "debugpng/shape.png");
 
-        Shape* sh2 = new Shape(0, 99);
-        save_png(sh2->matrix, sh2->size, sh2->size, "debugpng/shape2.png");
+//        Shape* sh2 = new Shape(0, 99);
+//        save_png(sh2->matrix, sh2->size, sh2->size, "debugpng/shape2.png");
 
 
         return 0;

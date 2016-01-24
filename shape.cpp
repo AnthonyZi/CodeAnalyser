@@ -6,7 +6,7 @@ Shape::Shape(int shape, int psize)
         switch(shape)
         {
         case CIRCLE:
-                matrix = getCircleShape(psize);
+                setCircleShape(psize);
                 size = psize;
                 break;
         default :
@@ -14,12 +14,32 @@ Shape::Shape(int shape, int psize)
         }
 }
 
-bool* Shape::getCircleShape(int psize)
+Shape::Shape(const Shape &pshape)
 {
-        bool* shape = (bool*)malloc(sizeof(bool)*psize*psize);
+        size = pshape.size;
+        lefthalfsize = pshape.lefthalfsize;
+        righthalfsize = pshape.righthalfsize;
+        onescounted = pshape.onescounted;
+
+        matrix = (bool*)malloc(sizeof(bool)*size*size);
+        for(int offset = 0; offset<size*size; offset++)
+        {
+                *(matrix+offset) = *(pshape.matrix+offset);
+        }
+}
+
+Shape::~Shape()
+{
+        std::cout << "destructor of shape" << std::endl;
+        free(matrix);
+}
+
+void Shape::setCircleShape(int psize)
+{
+        matrix = (bool*)malloc(sizeof(bool)*psize*psize);
 
         for(int i = 0; i<psize*psize; i++)
-                *(shape+i) = 0;
+                *(matrix+i) = 0;
 
         lefthalfsize = (psize/2)-1;
         int tmpVal = 0;
@@ -41,10 +61,10 @@ bool* Shape::getCircleShape(int psize)
                                 y = 0.5+h;
 
                                 tmpVal = ((x*x)+(y*y)) <= psize*psize/4 ? 1 : 0;
-                                *(shape + (lefthalfsize-h)*psize + (lefthalfsize-w)) = tmpVal;
-                                *(shape + (lefthalfsize-h)*psize + (righthalfsize+w)) = tmpVal;
-                                *(shape + (righthalfsize+h)*psize + (lefthalfsize-w)) = tmpVal;
-                                *(shape + (righthalfsize+h)*psize + (righthalfsize+w)) = tmpVal;
+                                *(matrix + (lefthalfsize-h)*psize + (lefthalfsize-w)) = tmpVal;
+                                *(matrix + (lefthalfsize-h)*psize + (righthalfsize+w)) = tmpVal;
+                                *(matrix + (righthalfsize+h)*psize + (lefthalfsize-w)) = tmpVal;
+                                *(matrix + (righthalfsize+h)*psize + (righthalfsize+w)) = tmpVal;
 
                                 if(tmpVal)
                                         onescounted += 4;
@@ -67,10 +87,10 @@ bool* Shape::getCircleShape(int psize)
 
                                 tmpVal = (((x*x)+(y*y)) <= psize*psize/4) ? 1 : 0;
 
-                                *(shape + (lefthalfsize-h)*psize + (lefthalfsize - w)) = tmpVal;
-                                *(shape + (lefthalfsize-h)*psize + (righthalfsize + w)) = tmpVal;
-                                *(shape + (righthalfsize+h)*psize + (lefthalfsize - w)) = tmpVal;
-                                *(shape + (righthalfsize+h)*psize + (righthalfsize + w)) = tmpVal;
+                                *(matrix + (lefthalfsize-h)*psize + (lefthalfsize - w)) = tmpVal;
+                                *(matrix + (lefthalfsize-h)*psize + (righthalfsize + w)) = tmpVal;
+                                *(matrix + (righthalfsize+h)*psize + (lefthalfsize - w)) = tmpVal;
+                                *(matrix + (righthalfsize+h)*psize + (righthalfsize + w)) = tmpVal;
 
                                 if(tmpVal)
                                         onescounted += 4;                       }
@@ -79,15 +99,13 @@ bool* Shape::getCircleShape(int psize)
                 int middle = (psize/2);
                 for(int i = 0; i < middle; i++)
                 {
-                        *(shape + (middle*psize) + i) = 1;
-                        *(shape + (i*psize) + middle) = 1;
-                        *(shape + (middle*psize) + middle + i + 1) = 1;
-                        *(shape + ((middle+i+1)*psize) + middle) = 1;
+                        *(matrix + (middle*psize) + i) = 1;
+                        *(matrix + (i*psize) + middle) = 1;
+                        *(matrix + (middle*psize) + middle + i + 1) = 1;
+                        *(matrix + ((middle+i+1)*psize) + middle) = 1;
                 }
-                *(shape + (middle*psize) + middle) = 1;
+                *(matrix + (middle*psize) + middle) = 1;
         }
-                
-        return shape;
 }
 
 //for ease : shapes with an even siz

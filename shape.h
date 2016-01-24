@@ -18,12 +18,14 @@ public:
 
 public:
         Shape(int shape, int size);
+        Shape(const Shape &pshape);
+        ~Shape();
 
         bool* getmatrix();
         int getSize();
         int getonescounted();
 
-        static bool* getCircleShape(int size);
+        void setCircleShape(int size);
 };
 
 #endif
