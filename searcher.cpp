@@ -9,7 +9,8 @@ Searcher::Searcher(BITImage pimage, int pdiameter)
 Searcher::Searcher(BITImage pimage)
 {
         image = &pimage;
-        setDiameter((image->getWidth() < image->getHeight() ? image->getHeight() : image->getWidth()));
+        int segmentsize = image->getWidth() > image->getHeight() ? image->getHeight()/5 : image->getWidth()/5;
+        setDiameter(segmentsize);
 }
 
 Searcher::Searcher(const Searcher &psearcher)
@@ -73,14 +74,32 @@ int Searcher::conv2d_and_sum(int xoff, int yoff)
         return sum;
 }
 
-void Searcher::labelImage()
+std::vector<BITImage*> Searcher::getSearchSegments()
 {
         BITImage *tmp = new BITImage(*image);
 
-        Shape* circle = new Shape(0, 10);
+        Shape* circle = new Shape(0, image->getWidth() > image->getHeight() ? image->getHeight()/5 : image->getWidth()/5);
+        extend_image(tmp, circle, 1);
+        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/bla.png");
+
+/*
         filter_median(tmp, circle, 1, 1, 0.8f);
-        
-//        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/filtertest.png");
+        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/filtertest1.png");
+        filter_median(tmp, circle, 1, 1, 0.8f);
+        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/filtertest2.png");
+        filter_median(tmp, circle, 1, 1, 0.8f);
+        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/filtertest3.png");
+        filter_median(tmp, circle, 1, 1, 0.8f);
+        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/filtertest4.png");
+        filter_median(tmp, circle, 1, 1, 0.8f);
+        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/filtertest5.png");
+        filter_median(tmp, circle, 1, 1, 0.8f);
+        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/filtertest6.png");
+        filter_median(tmp, circle, 1, 1, 0.8f);
+        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/filtertest7.png");
+        filter_median(tmp, circle, 1, 1, 0.8f);
+        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/filtertest8.png");
+*/
 }
 
 BITImage* Searcher::getImage()

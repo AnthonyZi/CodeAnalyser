@@ -25,7 +25,6 @@ float bits_in_shape(BITImage *sourceimage, Shape *kernel, bool ones, int xoff, i
         else return kernel->getonescounted()-sum; 
 }
 
-
 void filter_median(BITImage *sourceimage, Shape *kernel, bool ones, bool more, float threshold)
 {
         bool* tmp = (bool*)malloc(sizeof(bool)*sourceimage->getWidth()*sourceimage->getHeight());
@@ -51,4 +50,44 @@ void filter_median(BITImage *sourceimage, Shape *kernel, bool ones, bool more, f
         sourceimage->setPixels(tmp);
 }
 
+void extend_image(BITImage *sourceimage, Shape *kernel, bool ones)
+{
+        bool* tmp = (bool*)malloc(sizeof(bool)*sourceimage->getWidth()*sourceimage->getHeight());
+        bool* tmpsourceimage = sourceimage->getPixels();
+        bool* tmpkernel = kernel->getmatrix();
 
+        int sourceheight = sourceimage->getHeight();
+        int sourcewidth = sourceimage->getWidth();
+        int kernelsize = kernel->getSize();
+
+        for(int z = 0; z < sourcewidth*sourceheight; z++)
+                *(tmp+z) = 0;
+
+        for(int h = 0; h < sourceheight; h++)
+        {
+                for(int w = 0; w < sourcewidth; w++)
+                {
+                        if(*(tmpsourceimage+h*sourcewidth+w))
+                        {
+                                int leftkernelradius = (kernel->getSize()-1)/2;
+                                int yleftborder = h-leftkernelradius > 0 ? h-leftkernelradius : 0;
+                                int yrightborder = yleftborder+kernelsize < sourceheight ? yleftborder+kernelsize : sourceheight;
+
+                                int xleftborder = w-leftkernelradius > 0 ? w-leftkernelradius : 0;
+                                int xrightborder = xleftborder+kernelsize < sourcewidth ? xleftborder+kernelsize : sourcewidth;
+
+                                int ykerneloffset = leftkernelradius-h > 0 ? leftkernelradius-h : 0;
+                                int xkerneloffset = leftkernelradius-w > 0 ? leftkernelradius-w : 0;
+
+                                for(int y = yleftborder, ykoff = ykerneloffset; y < yrightborder; y++, ykoff++)
+                                {
+                                        for(int x = xleftborder, xkoff = xkerneloffset; x < xrightborder; x++, xkoff++)
+                                        {
+                                                *(tmp+y*sourcewidth+x) |= *(tmpkernel+ykoff*kernelsize+xkoff);
+                                        }
+                                }
+                        }
+                }
+        }
+        sourceimage->setPixels(tmp);
+}

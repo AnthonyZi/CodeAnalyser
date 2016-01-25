@@ -30,7 +30,7 @@ public:
         Searcher(const Searcher &psearcher);
 
         void searchSegments();
-        void labelImage();
+        std::vector<BITImage*> getSearchSegments();
         BITImage* getImage();
 };
 

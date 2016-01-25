@@ -100,7 +100,8 @@ int main(int argc, char* argv[])
 */
         Searcher *s = new Searcher(*bit);
         s->labelImage();
-        s->setDiameter(20);
+//        s->setDiameter(20);
+//        s->labelImage();
 
 //        Searcher *b = new Searcher(*s);
 //        save_png(b->getImage()->getPixels(), b->getImage()->getWidth(), b->getImage()->getHeight(), "debugpng/copysearcher.png");

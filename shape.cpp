@@ -2,7 +2,7 @@
 
 Shape::Shape(int shape, int psize)
 {
-        std::cout << "constructor" << std::endl;
+        std::cout << "shape constructor" << std::endl;
         switch(shape)
         {
         case CIRCLE:

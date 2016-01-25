@@ -12,7 +12,7 @@ NAME = png
 CSOURCE =
 CPPSOURCE = test.cpp readpng.cpp circlesegment.cpp searcher.cpp rgbimage.cpp labimage.cpp bitimage.cpp shape.cpp medianfilter.cpp writepng.cpp
 
-IMAGE = pngs/document4.png
+IMAGE = pngs/scannedtest.png
 #################
 
 OBJS += $(patsubst %.cpp, %.o, $(filter %.cpp, $(CPPSOURCE)))
