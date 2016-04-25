@@ -9,6 +9,7 @@
 #include "medianfilter.h"
 #include "writepng.h"
 #include "shape.h"
+#include "labeledimage.h"
 
 class Searcher
 {
@@ -29,7 +30,6 @@ public:
         Searcher(BITImage pimage);
         Searcher(const Searcher &psearcher);
 
-        void searchSegments();
         std::vector<BITImage*> getSearchSegments();
         BITImage* getImage();
 };

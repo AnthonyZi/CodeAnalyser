@@ -35,7 +35,7 @@ void Searcher::setDiameter(int pdiameter)
 
 //        dotwidth = sqrt(2*diameter*diameter);
 }
-
+/*
 void Searcher::searchSegments()
 {
         std::time_t at;
@@ -59,6 +59,7 @@ void Searcher::searchSegments()
                 setDiameter(segmentkernel->getSize()-1);
         }
 }
+*/
 
 int Searcher::conv2d_and_sum(int xoff, int yoff)
 {
@@ -80,7 +81,55 @@ std::vector<BITImage*> Searcher::getSearchSegments()
 
         Shape* circle = new Shape(0, image->getWidth() > image->getHeight() ? image->getHeight()/5 : image->getWidth()/5);
         extend_image(tmp, circle, 1);
-        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/bla.png");
+        save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/shapesextended.png");
+
+        LABELEDImage *limage = new LABELEDImage(tmp);
+
+
+        std::vector<BITImage*> vec;
+        
+        bool* numbers = (bool*)malloc(sizeof(bool)*tmp->getWidth()*tmp->getHeight());
+        for(int i = 0; i < tmp->getHeight()*tmp->getWidth(); i++)
+                *(numbers+i) = *(limage->getPixels()+i) > 0 ? 1 : 0;
+
+
+        bool* ones = (bool*)malloc(sizeof(bool)*tmp->getWidth()*tmp->getHeight());
+        for(int i = 0; i< tmp->getWidth()*tmp->getHeight(); i++)
+        {
+                *(ones+i) = *(limage->getPixels()+i) == 1 ? 1 : 0;
+        }
+
+        bool* twos=(bool*)malloc(sizeof(bool)*tmp->getWidth()*tmp->getHeight());
+        for(int i = 0; i< tmp->getWidth()*tmp->getHeight(); i++)
+        {
+                *(twos+i) = *(limage->getPixels()+i) == 2 ? 1 : 0;
+        }
+
+        bool* threes =(bool*)malloc(sizeof(bool)*tmp->getWidth()*tmp->getHeight());
+        for(int i = 0; i< tmp->getWidth()*tmp->getHeight(); i++)
+        {
+                *(threes+i) = *(limage->getPixels()+i) == 3 ? 1 : 0;
+        }
+
+        bool* fours =(bool*)malloc(sizeof(bool)*tmp->getWidth()*tmp->getHeight());
+        for(int i = 0; i< tmp->getWidth()*tmp->getHeight(); i++)
+        {
+                *(fours+i) = *(limage->getPixels()+i) == 4 ? 1 : 0;
+        }
+
+        bool* fives =(bool*)malloc(sizeof(bool)*tmp->getWidth()*tmp->getHeight());
+        for(int i = 0; i< tmp->getWidth()*tmp->getHeight(); i++)
+        {
+                *(fives+i) = *(limage->getPixels()+i) == 5 ? 1 : 0;
+        }
+
+
+        save_png(ones, tmp->getWidth(), tmp->getHeight(), "debugpng/1.png");
+        save_png(twos, tmp->getWidth(), tmp->getHeight(), "debugpng/2.png");
+        save_png(threes, tmp->getWidth(), tmp->getHeight(), "debugpng/3.png");
+        save_png(fours, tmp->getWidth(), tmp->getHeight(), "debugpng/4.png");
+        save_png(fives, tmp->getWidth(), tmp->getHeight(), "debugpng/5.png");
+        save_png(numbers, tmp->getWidth(), tmp->getHeight(), "debugpng/numbers.png");
 
 /*
         filter_median(tmp, circle, 1, 1, 0.8f);
@@ -100,6 +149,8 @@ std::vector<BITImage*> Searcher::getSearchSegments()
         filter_median(tmp, circle, 1, 1, 0.8f);
         save_png(tmp->getPixels(), tmp->getWidth(), tmp->getHeight(), "debugpng/filtertest8.png");
 */
+
+        return vec;
 }
 
 BITImage* Searcher::getImage()

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include "readpng.h"
+//#include "readpng.h"
 //#include "circlesegment.h"
 #include "searcher.h"
 #include "writepng.h"
@@ -31,12 +31,13 @@ int main(int argc, char* argv[])
         std::cout << 1000.0*(t2-t1) / CLOCKS_PER_SEC << " ms" << std::endl; //beta
         //END READ
 
+/*
         t1 = std::clock(); //beta
         save_png(rgb->getPixels(), rgb->getWidth(), rgb->getHeight(), "debugpng/copy.png"); //beta
         t2 = std::clock(); //beta
         std::cout << "saving copy: "; //beta
         std::cout << 1000.0*(t2-t1) / CLOCKS_PER_SEC << " ms" << std::endl; //beta
-
+*/
 
         //START IMAGEPROCESSING
         t1 = std::clock(); //beta
@@ -69,7 +70,7 @@ int main(int argc, char* argv[])
         std::cout << "[ " << (int)*(rgbref) << " " << (int)*(rgbref+1) << " " << (int)*(rgbref+2) << " (rgb) -> " << std::dec << *(labref) << " " << *(labref+1) << " " << *(labref+2) << " (lab) ]" << std::endl; //beta
 
 
-        save_png(bit->getPixels(), bit->getWidth(), bit->getHeight(), "debugpng/binary_1.png");
+        save_png(bit->getPixels(), bit->getWidth(), bit->getHeight(), "debugpng/bitmatrix.png");
 
 
         t1 = std::clock(); //beta
@@ -80,7 +81,7 @@ int main(int argc, char* argv[])
         //END IMAGEPROCESSING
 
 
-        save_png(bit->getPixels(), bit->getWidth(), bit->getHeight(), "debugpng/binary_2.png");
+        save_png(bit->getPixels(), bit->getWidth(), bit->getHeight(), "debugpng/small_structures_erased.png");
 
 /*
         int* circlemat;
@@ -99,7 +100,7 @@ int main(int argc, char* argv[])
 //        s->searchSegments();
 */
         Searcher *s = new Searcher(*bit);
-        s->labelImage();
+        s->getSearchSegments();
 //        s->setDiameter(20);
 //        s->labelImage();
 

@@ -10,7 +10,7 @@ LDFLAGS = -L/usr/lib/arm-linux-gnueabihf/ -lpng -lz
 NAME = png
 
 CSOURCE =
-CPPSOURCE = test.cpp readpng.cpp circlesegment.cpp searcher.cpp rgbimage.cpp labimage.cpp bitimage.cpp shape.cpp medianfilter.cpp writepng.cpp
+CPPSOURCE = test.cpp readpng.cpp circlesegment.cpp searcher.cpp rgbimage.cpp labimage.cpp bitimage.cpp shape.cpp medianfilter.cpp writepng.cpp labeledimage.cpp
 
 IMAGE = pngs/scannedtest.png
 #################
@@ -27,13 +27,13 @@ OBJS += $(patsubst $.c, %.o, $(filter %.c, $(CSOURCE)))
 default : $(NAME)
 	$(MAKE) $(NAME)
 	./$(NAME) $(IMAGE)
-	gpicview debugpng/copy.png
+	gpicview debugpng/after_scaling.png
 
 r :
 	reset
 	$(MAKE) $(NAME)
 	./$(NAME) $(IMAGE)
-	gpicview debugpng/copy.png
+	gpicview debugpng/after_scaling.png
 
 compile : 
 	$(MAKE) $(NAME)
